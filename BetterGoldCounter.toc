@@ -7,7 +7,6 @@
 ## Author: Nosink Ð
 ## Version: 1.0.0
 ## SavedVariables: BetterGoldCounterDB
-## SavedVariablesPerCharacter: BetterGoldCounterPCDB
 
 # Module: Localization
 localization/localization.lua
@@ -43,4 +42,8 @@ addon.lua
 # MVC Player Money Counter
 model/money.lua
 view/label.lua
+view/frame.lua
 controller/player.lua
+
+# Settings Changed Handler for View
+view/settings.lua

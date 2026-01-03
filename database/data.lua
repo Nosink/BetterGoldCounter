@@ -20,5 +20,4 @@ ns.defaults = {
 }
 
 ns.defaultsPC = {
-    records = {},
 }
