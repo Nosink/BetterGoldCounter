@@ -44,14 +44,14 @@ local function createGoldCounterFrame()
     end)
 
     ns.frame:SetScript("OnEnter", function(self)
-        if not settings.IsFadingEnabled() then return end
+        if not settings.IsFadeEnabled() then return end
         local duration = settings.GetFadeDuration()
         local targetAlpha = settings.GetFadeInOpacity()
         utils.FadeIn(self, duration, targetAlpha)
     end)
 
     ns.frame:SetScript("OnLeave", function(self)
-        if not settings.IsFadingEnabled() then return end
+        if not settings.IsFadeEnabled() then return end
         local duration = settings.GetFadeDuration()
         local targetAlpha = settings.GetFadeOutOpacity()
         utils.FadeOut(self, duration, targetAlpha)

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1] - 2026-01-03
+Fixed fade error settings
+
+### Fixed
+- Hot fix to restore fade guard clause
+
+---
+
 ## [1.0.0] - 2025-12-31
 Initial release of BetterGoldCounter.
 
