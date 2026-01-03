@@ -3,17 +3,11 @@ local name, ns = ...
 local utils = ns.utils 
 
 local function initializeUnit()
-    if not ns.unit then return end
     ns.unit = UnitName("player") or "Unknown"
 end
 
 local function initializeRecord()
-    if not ns.date then return end
-
-    local currentDate = date("%Y-%m-%d", GetServerTime())
-    if ns.date == currentDate then return end
-
-    ns.date = currentDate
+    ns.date = date("%Y-%m-%d", GetServerTime())
     ns.database[ns.unit] = ns.database[ns.unit] or {records = {}}
     if not ns.database[ns.unit].records[ns.date] then
         ns.database[ns.unit].records[ns.date] = {ns.date, 0, ""}
