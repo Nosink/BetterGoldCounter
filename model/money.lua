@@ -1,8 +1,9 @@
 local name, ns = ...
 
 local function onPlayerMoney()
-    ns.session = ns.session + (GetMoney() - ns.current)
-    ns.current = GetMoney()
+    local money = GetMoney()
+    ns.session = ns.session + (money - ns.current)
+    ns.current = money
     ns:TriggerEvent(name .. "_PLAYER_MONEY_CACHED")
 end
 

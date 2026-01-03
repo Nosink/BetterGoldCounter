@@ -22,4 +22,6 @@ if ns.locale == "esES" or ns.locale == "esMX" then
     L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"] = "Opacidad al Desvanecer"
     L["LKEY_OPTIONS_FADE_IN_OPACITY_SLIDER"] = "Opacidad al Aparecer"
     L["LKEY_OPTIONS_FADE_DURATION_EB"] = "Duración del Desvanecimiento (segundos): "
+
+    L["LKEY_TOTAL_CHAT_HISTORY"] = "Total"
 end

@@ -21,3 +21,5 @@ L["LKEY_OPTIONS_FADE_CB"] = "Enable Fade Effect"
 L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"] = "Fade Out Opacity"
 L["LKEY_OPTIONS_FADE_IN_OPACITY_SLIDER"] = "Fade In Opacity"
 L["LKEY_OPTIONS_FADE_DURATION_EB"] = "Fade Duration (seconds): "
+
+L["LKEY_TOTAL_CHAT_HISTORY"] = "Total"

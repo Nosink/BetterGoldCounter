@@ -1,4 +1,5 @@
 local name, ns = ...
+local L = ns.L
 
 local utils = ns.utils
 
@@ -10,7 +11,7 @@ local function onHistoryRequested()
         print(string.format("%s: %s %s", tostring(value[1]), tostring(value[3]), GetMoneyString(value[2])))
     end
     local sign = utils.GetSignSymbol(total)
-    print(string.format("Total: %s %s", sign, GetMoneyString(total)))
+    print(string.format("%s: %s %s", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(total)))
 end
 
 ns:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)
