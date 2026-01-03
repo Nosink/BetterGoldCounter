@@ -17,6 +17,7 @@ ns.defaults = {
     fadeDuration = 0.1,
 
     session = 0,
+
 }
 
 ns.defaultsPC = {

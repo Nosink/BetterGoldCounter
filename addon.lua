@@ -2,21 +2,27 @@ local name, ns = ...
 
 local utils = ns.utils 
 
+local function initializeUnit()
+    ns.unit = UnitName("player") or "Unknown"
+end
+
 local function initializeRecord()
     ns.date = date("%Y-%m-%d", GetServerTime())
-    ns.databasePC.records = ns.databasePC.records or {}
-    if not ns.databasePC.records[ns.date] then
-        ns.databasePC.records[ns.date] = {ns.date, 0, ""}
+    ns.database[ns.unit] = ns.database[ns.unit] or {records = {}}
+    if not ns.database[ns.unit].records[ns.date] then
+        ns.database[ns.unit].records[ns.date] = {ns.date, 0, ""}
     end
 end
 
 local function initializeVars()
+    ns.database.session = nil
     ns.current = GetMoney()
     ns.session = 0
 end
 
 local function onVariablesLoaded()
 
+    initializeUnit()
     initializeRecord()
     initializeVars()
 
@@ -24,12 +30,13 @@ local function onVariablesLoaded()
 end
 
 local function storeSession(sessionAmount)
-    ns.databasePC.records[ns.date][2] = ns.databasePC.records[ns.date][2] + (tonumber(sessionAmount) or 0)
-    ns.databasePC.records[ns.date][3] = utils.GetSignSymbol(sessionAmount)
+    ns.database[ns.unit].records[ns.date][2] = ns.database[ns.unit].records[ns.date][2] + (tonumber(sessionAmount) or 0)
+    ns.database[ns.unit].records[ns.date][3] = utils.GetSignSymbol(sessionAmount)
 end
 
 local function onPlayerLogout()
     storeSession(ns.session)
+    ns.database.session = nil
 end
 
 local function onSessionReset(_, sessionAmount)
@@ -59,6 +66,7 @@ ns:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)
 ns:RegisterEvent(name .. "_CLEAR_HISTORY_REQUESTED", onClearHistoryRequested)
 
 local function onPlayerEnteringWorld()
+    if not ns.database.session then return end
     ns.session = ns.database.session or 0
     ns.database.session = nil
     ns:TriggerEvent(name .. "_PLAYER_MONEY_CACHED")
