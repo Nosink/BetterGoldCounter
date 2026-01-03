@@ -16,7 +16,7 @@ ns.defaults = {
     fadeInOpacity = 1.0,
     fadeDuration = 0.1,
 
-    session = 0,
+    session = nil,
 
 }
 

@@ -45,5 +45,5 @@ view/label.lua
 view/frame.lua
 controller/player.lua
 
-# Settings Changed Handler for View
-view/settings.lua
+# Chat
+view/chat.lua
