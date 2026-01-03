@@ -1,5 +1,13 @@
 # Changelog
- 
+
+## [1.0.2] - 2026-01-03
+Fixed unti and record initializaction
+
+### Fixed
+- Removed guard clauses to ensure values
+
+--- 
+
 ## [1.0.1] - 2026-01-03
 Fixed fade error settings
 
