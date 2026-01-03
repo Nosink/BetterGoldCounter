@@ -11,11 +11,15 @@ Initial release of BetterGoldCounter.
 	- Font Size (min 8)
 	- Dynamic Width or Static Width (min 50)
 	- Fade effect with configurable in/out opacity and duration
-- Slash commands: `/bettergoldcounter` and `/bgc` with `options|config|settings` and `reset` subcommands.
+- Slash commands: `/bettergoldcounter` and `/bgc` with `options|config|settings`, `reset|clean` and `history` subcommands.
+- Cross loadings creen keep session amount displayed.
 - English (enUS) and Spanish (esES/esMX) localization.
 
 ### Compatibility
 - WoW Classic Era 1.15.8
+
+### Notes
+- `WIP` LF display a floating box with history, more visual than chat. 
 
 ### Notes
 - Position persists across sessions; movement allowed when unlocked.

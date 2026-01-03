@@ -3,9 +3,9 @@
 Lightweight Classic Era addon that shows your session gold change and keeps a simple per-day record. Clean, configurable label with optional fade effect and dynamic sizing.
 
 ## Usage
-- Open options: `/bettergoldcounter`, `/bgc`, or Interface -> AddOns.
+- Addon loads and works automatically.
 - Move the label: unlock in options, then drag with left-click.
-- Reset session: `/bettergoldcounter reset` or `/bgc reset`.
+- Open options: `/bettergoldcounter`, `/bgc`, or Interface -> AddOns.
 
 ## Features
 - Session gold tracker: displays `+` or `-` with the current session delta.
@@ -19,10 +19,9 @@ Lightweight Classic Era addon that shows your session gold change and keeps a si
 
 ## Commands
 - `/bettergoldcounter` or `/bgc` — open the options panel.
-- Subcommands: `options` | `config` | `settings` — open options; `reset` — reset session.
-
-## Notes
-- Working on history records and total amounts, just WIP
+- Subcommands
+    - `reset|clear` — reset current session.
+    - `history` — display all time records.
 
 ## License
 - GPL-3.0 — see LICENSE.
