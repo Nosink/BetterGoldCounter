@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3] - 2026-01-03
+Fixed session restoration and currency count
+
+### Fixed
+- Garantied the database session to a nil value
+
+--- 
+
 ## [1.0.2] - 2026-01-03
 Fixed unti and record initializaction
 
