@@ -18,6 +18,8 @@ ns.defaults = {
 
     session = nil,
 
+    records = { },
+
 }
 
 ns.defaultsPC = {

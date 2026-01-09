@@ -3,20 +3,20 @@ local name, ns = ...
 local utils = ns.utils 
 
 local function initializeUnit()
-    ns.unit = UnitName("player") or "Unknown"
+    ns.unit = ns.unit or UnitName("player") or "Unknown"
 end
 
 local function initializeRecord()
-    ns.date = date("%Y-%m-%d", GetServerTime())
-    ns.database[ns.unit] = ns.database[ns.unit] or {records = {}}
-    if not ns.database[ns.unit].records[ns.date] then
-        ns.database[ns.unit].records[ns.date] = {ns.date, 0, ""}
-    end
+    ns.date = ns.date or date("%Y-%m-%d", GetServerTime())
+    ns.database.records = ns.database.records or {}
+    ns.database.records[ns.unit] = ns.database.records[ns.unit] or {}
+    ns.database.records[ns.unit][ns.date] = ns.database.records[ns.unit][ns.date] or { ns.date, 0, ""}
 end
 
 local function initializeVars()
     ns.current = GetMoney()
-    ns.session, ns.database.session = ns.database.session or 0, nil
+    ns.session = ns.database.session or 0
+    ns.database.session = nil
 end
 
 local function onVariablesLoaded()
@@ -29,8 +29,9 @@ local function onVariablesLoaded()
 end
 
 local function storeSession(sessionAmount)
-    ns.database[ns.unit].records[ns.date][2] = ns.database[ns.unit].records[ns.date][2] + (tonumber(sessionAmount) or 0)
-    ns.database[ns.unit].records[ns.date][3] = utils.GetSignSymbol(sessionAmount)
+    ns.database.records[ns.unit][ns.date][2] = ns.database.records[ns.unit][ns.date][2] + (tonumber(sessionAmount) or 0)
+    ns.database.records[ns.unit][ns.date][3] = utils.GetSignSymbol(sessionAmount)
+    ns.database.session = nil
 end
 
 local function onSessionReset(_, sessionAmount)
@@ -48,5 +49,6 @@ end
 
 ns:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
 ns:RegisterEvent(name .. "_SESSION_RESET", onSessionReset)
+
 ns:RegisterEvent("PLAYER_LOGOUT", onPlayerLogout)
 ns:RegisterEvent("PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
