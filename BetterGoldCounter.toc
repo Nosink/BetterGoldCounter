@@ -1,6 +1,8 @@
 
 ## Title: BetterGoldCounter
 
+## Interface: 20505
+
 ## Notes-enUS: Track and display your gold with session earnings and per-character totals.
 ## Notes-esES: Realiza un seguimiento y muestra tu oro con ganancias por sesión y totales por personaje.
 

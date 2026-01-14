@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.4] - 14/01/2026
+Work for TBC
+
+---
+
 ## [1.0.3] - 2026-01-03
 Fixed session restoration and currency count
 
