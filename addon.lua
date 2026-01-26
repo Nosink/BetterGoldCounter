@@ -6,12 +6,9 @@ local function onAddonLoaded(_, addonName)
     ns:TriggerEvent(name .. "_ADDON_LOADED")
 end
 
-local function onPlayerEnteringWorld(_, isInitialLogin, isReloadingUi)
-    if isInitialLogin then
-        ns:TriggerEvent(name .. "_IS_INITIAL_LOGIN")
-    elseif isReloadingUi then
-        ns:TriggerEvent(name .. "_IS_RELOADING_UI")
-    end
+local function onPlayerEnteringWorld(_, _, isReloadingUi)
+    if not isReloadingUi then return end
+    ns:TriggerEvent(name .. "_IS_RELOADING_UI")
 end
 
 local function onPlayerLeavingWorld()

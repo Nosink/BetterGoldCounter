@@ -53,6 +53,11 @@ local function SetBackdrop(frame)
 end
 
 local function SetAlpha(frame)
+    frame.SetFrameAlpha = function(self)
+        local alpha = settings.GetFadeOpacity()
+        self:SetAlpha(alpha)
+    end
+
     local function onEnter(self)
         if not settings.IsFadeEnabled() then return end
         local duration = settings.GetFadeDuration()
@@ -67,9 +72,7 @@ local function SetAlpha(frame)
         utils.FadeOut(self, duration, targetAlpha)
     end
 
-    local alpha = settings.GetFadeOpacity()
-
-    frame:SetAlpha(alpha)
+    frame:SetFrameAlpha()
     frame:SetScript("OnEnter", onEnter)
     frame:SetScript("OnLeave", onLeave)
 end
@@ -100,18 +103,22 @@ local function CreateUpdateTextMethod(frame)
         return width, height
     end
 
-    frame.UpdateFrameAndText = function(self, amount)
-        if not self.label then return end
-
-        local text = getMoneyString(amount)
-        self.label:SetText(text)
-
+    frame.SetFrameSize = function(self)
         local fontName, _, flags = self.label:GetFont()
         self.label:SetFont(tostring(fontName), settings.GetFontSize(), flags)
         self.label:SetPoint("RIGHT", self, "RIGHT", -settings.GetFontSize() * 0.8, 0)
 
         local width, height = self:CalculateSize()
         self:SetSize(width, height)
+    end
+
+    frame.UpdateFrameAndText = function(self, amount)
+        if not self.label then return end
+
+        local text = getMoneyString(amount)
+        self.label:SetText(text)
+
+        self:SetFrameSize()
     end
 end
 
@@ -141,8 +148,12 @@ end
 
 local function onVariablesLoaded(_)
     createFrame()
-    SetText(ns.session or 0)
     ns:TriggerEvent(name .. "_FRAME_CREATED")
+end
+
+local function onFrameCreated(_)
+    print (name .. ": Frame created.")
+    SetText(ns.session)
 end
 
 local function onSessionMoneyChanged(_, sessionMoney)
@@ -154,14 +165,15 @@ end
 
 local function onSettingChanged(_, key)
     if (key == "width" or key == "dynamicWidth" or key == "fontSize") then
-        
+        ns.frame:SetFrameSize()
     elseif (key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity") then
-
+        ns.frame:SetFrameAlpha()
     elseif (key == "backdrop") then
-        
+        ns.frame:SetBackdropAlpha()
     end
 end
 
 ns:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
+ns:RegisterEvent(name .. "_FRAME_CREATED", onFrameCreated)
 ns:RegisterEvent(name .. "_SESSION_MONEY_CHANGED", onSessionMoneyChanged)
 ns:RegisterEvent(name .. "_SETTINGS_CHANGED", onSettingChanged)
