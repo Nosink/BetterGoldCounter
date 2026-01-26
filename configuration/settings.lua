@@ -9,10 +9,6 @@ local defaultWidth = 50
 local defaultFadeDuration = 0.01
 
 -- General Frame
-function ns.settings.IsFrameLocked()
-    return ns.database.locked
-end
-
 function ns.settings.IsFrameUnlocked()
     return not ns.database.locked
 end
@@ -31,10 +27,6 @@ function ns.settings.SetPosition(x, y)
 end
 
 -- Backdrop
-function ns.settings.IsBackdropEnabled()
-    return ns.database.backdrop
-end
-
 function ns.settings.GetBackdropAlphas()
     local backdropAlpha = ns.database.backdrop and defaultBackdropAlpha or 0.0
     local backdropBorderalpha = ns.database.backdrop and defaultBackdropBorderAlpha or 0.0
@@ -64,13 +56,9 @@ function ns.settings.IsFadeEnabled()
     return ns.database.fade
 end
 
-function ns.settings.IsFadeDisabled()
-    return not ns.database.fade
-end
-
 function ns.settings.GetFadeOpacity()
     local db = ns.database
-    return db.fade and db.fadeOutOpacity or not db.fade and db.fadeInOpacity or 0
+    return db.fade and db.fadeOutOpacity or not db.fade and db.fadeInOpacity
 end
 
 function ns.settings.GetFadeOutOpacity()

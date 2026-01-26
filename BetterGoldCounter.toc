@@ -38,12 +38,10 @@ configuration/settings.lua
 
 # Addon - Core
 utils.lua
-data.lua
 addon.lua
 
 # MVC Player Money Counter
-model/money.lua
-view/label.lua
+model/player.lua
 view/frame.lua
 controller/player.lua
 
