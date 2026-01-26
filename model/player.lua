@@ -13,7 +13,6 @@ local function onInitialLogin()
 end
 
 local function onReloadingUI()
-    print ("Previous session money: " .. tostring(database.session))
     ns.session = database.session or 0
     database.session = nil
 end

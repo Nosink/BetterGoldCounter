@@ -3,7 +3,6 @@ local name, ns = ...
 ns.settings = ns.settings or {}
 
 local defaultBackdropAlpha = 0.85
-local defaultBackdropBorderAlpha = 1.0
 local defaultFontSize = 8
 local defaultWidth = 50
 local defaultFadeDuration = 0.01
@@ -27,10 +26,8 @@ function ns.settings.SetPosition(x, y)
 end
 
 -- Backdrop
-function ns.settings.GetBackdropAlphas()
-    local backdropAlpha = ns.database.backdrop and defaultBackdropAlpha or 0.0
-    local backdropBorderalpha = ns.database.backdrop and defaultBackdropBorderAlpha or 0.0
-    return backdropAlpha, backdropBorderalpha
+function ns.settings.GetBackdropAlpha()
+    return ns.database.backdrop and defaultBackdropAlpha or 0.0
 end
 
 -- Font Size
