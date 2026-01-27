@@ -1,8 +1,9 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 
 local function onPlayerMoney()
     local money = GetMoney()
-    ns:TriggerEvent(name .. "_PLAYER_MONEY_CHANGED", money)
+    LibEvent:TriggerEvent(name .. "_PLAYER_MONEY_CHANGED", money)
 end
 
-ns:RegisterEvent("PLAYER_MONEY", onPlayerMoney)
+LibEvent:RegisterEvent("PLAYER_MONEY", onPlayerMoney)

@@ -1,4 +1,5 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 local L = ns.L
 
 local utils = ns.utils
@@ -18,4 +19,4 @@ local function onHistoryRequested()
     print(string.format("%s: %s %s", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(total)))
 end
 
-ns:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)
+LibEvent:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)

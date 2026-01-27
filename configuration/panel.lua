@@ -1,4 +1,5 @@
 local _, ns = ...
+local LibEvent = LibStub("LibEvent")
 local L = ns.L
 
 local builder = ns.builder
@@ -44,4 +45,4 @@ local function onShow()
     fadeInOpacitySL:FetchFromDB()
 end
 
-ns:HookScript(builder.optionsPanel, "OnShow", onShow)
+LibEvent:HookScript(builder.optionsPanel, "OnShow", onShow)

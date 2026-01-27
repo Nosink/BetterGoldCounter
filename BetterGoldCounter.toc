@@ -10,14 +10,12 @@
 ## Version: 1.0.0
 ## SavedVariables: BetterGoldCounterDB
 
+libs/LibEvent/LibEvent.lua 
+
 # Module: Localization
 localization/localization.lua
 localization/enUS.lua
 localization/esES-esMX.lua
-# --------------------
-
-# Module: Events
-events/bus.lua
 # --------------------
 
 # Module: DataBase

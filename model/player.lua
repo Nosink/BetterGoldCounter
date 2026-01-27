@@ -1,4 +1,5 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 
 local storedSession = 0
 local dateTime = tostring(date("%Y-%m-%d"))
@@ -24,7 +25,7 @@ local function onReloadingUI(_)
     ns.session = ns.database.session
     ns.database.session = nil
 
-    ns:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
@@ -32,7 +33,7 @@ local function onPlayerMoneyChanged(_, newAmount)
     ns.session = ns.session + session
     ns.money = newAmount
 
-    ns:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerLogout(_)
@@ -47,13 +48,13 @@ end
 local function onClearSessionRequested(_)
     onPlayerLogout(_)
     onAddonLoaded(_)
-    ns:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-ns:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
-ns:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
-ns:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
-ns:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
-ns:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
-ns:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
-ns:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
+LibEvent:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
+LibEvent:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
+LibEvent:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
+LibEvent:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
+LibEvent:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
+LibEvent:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
+LibEvent:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)

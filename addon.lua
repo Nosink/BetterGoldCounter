@@ -1,25 +1,26 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 
 local function onAddonLoaded(_, addonName)
     if addonName ~= name then return end
 
-    ns:TriggerEvent(name .. "_ADDON_LOADED")
+    LibEvent:TriggerEvent(name .. "_ADDON_LOADED")
 end
 
 local function onPlayerLogout()
-    ns:TriggerEvent(name .. "_PLAYER_LOGOUT")
+    LibEvent:TriggerEvent(name .. "_PLAYER_LOGOUT")
 end
 
 local function onPlayerEnteringWorld(_, _, isReloadingUi)
     if not isReloadingUi then return end
-    ns:TriggerEvent(name .. "_IS_RELOADING_UI")
+    LibEvent:TriggerEvent(name .. "_IS_RELOADING_UI")
 end
 
 local function onPlayerLeavingWorld()
-    ns:TriggerEvent(name .. "_PLAYER_LEAVING_WORLD")
+    LibEvent:TriggerEvent(name .. "_PLAYER_LEAVING_WORLD")
 end
 
-ns:RegisterEvent("ADDON_LOADED", onAddonLoaded)
-ns:RegisterEvent("PLAYER_LOGOUT", onPlayerLogout)
-ns:RegisterEvent("PLAYER_ENTERING_WORLD", onPlayerEnteringWorld)
-ns:RegisterEvent("PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
+LibEvent:RegisterEvent("ADDON_LOADED", onAddonLoaded)
+LibEvent:RegisterEvent("PLAYER_LOGOUT", onPlayerLogout)
+LibEvent:RegisterEvent("PLAYER_ENTERING_WORLD", onPlayerEnteringWorld)
+LibEvent:RegisterEvent("PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)

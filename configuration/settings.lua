@@ -1,4 +1,5 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 
 ns.settings = ns.settings or {}
 
@@ -7,7 +8,6 @@ local defaultFontSize = 8
 local defaultWidth = 50
 local defaultFadeDuration = 0.01
 
--- General Frame
 function ns.settings.IsFrameUnlocked()
     return not ns.database.locked
 end
@@ -22,22 +22,19 @@ end
 
 function ns.settings.SetPosition(x, y)
     ns.database.x, ns.database.y = x, y
-    ns:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+     LibEvent:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end
 
--- Backdrop
 function ns.settings.GetBackdropAlpha()
     return ns.database.backdrop and defaultBackdropAlpha or 0.0
 end
 
--- Font Size
 function ns.settings.GetFontSize()
     local fontSize = tonumber(ns.database.fontSize) or defaultFontSize
     if not fontSize or fontSize < defaultFontSize then fontSize = defaultFontSize end
     return fontSize
 end
 
--- Width
 function ns.settings.GetWidth()
     local width = tonumber(ns.database.width) or defaultWidth
     if not width or width < defaultWidth then width = defaultWidth end
@@ -48,7 +45,6 @@ function ns.settings.IsDynamicWidth()
     return ns.database.dynamicWidth
 end
 
--- Fade
 function ns.settings.IsFadeEnabled()
     return ns.database.fade
 end

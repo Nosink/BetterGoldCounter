@@ -1,4 +1,5 @@
 local name, ns = ...
+local LibEvent = LibStub("LibEvent")
 
 SLASH_BETTERGOLDCOUNTER1 = "/bettergoldcounter"
 SLASH_BETTERGOLDCOUNTER2 = "/bgc"
@@ -15,9 +16,9 @@ SlashCmdList.BETTERGOLDCOUNTER = function(msg)
     if msg == "" or msg == "config" or msg == "options" or msg == "settings" then
         openSettings()
     elseif msg == "clear" or msg == "clear session" or msg == "reset" or msg == "reset session" then
-        ns:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
+        LibEvent:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
     elseif msg == "history" then
-        ns:TriggerEvent(name .. "_HISTORY_REQUESTED")
+        LibEvent:TriggerEvent(name .. "_HISTORY_REQUESTED")
     else
         print("|cffffd200" .. name  .. ":|r Unknown Command:", msg)
     end
