@@ -3,6 +3,8 @@ local name, ns = ...
 local utils = ns.utils
 local settings = ns.settings
 
+local frame = nil
+
 local function SetPosition(frame)
     local x, y = settings.GetPosition()
     frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
@@ -94,6 +96,19 @@ local function getMoneyString(amount)
     return (sign .. " " .. moneyString)
 end
 
+local function getSignColor(amount)
+    if amount > 0 then
+        return { r = 0.8, g = 1.0, b = 0.8 }
+    elseif amount < 0 then
+        return { r = 1.0, g = 0.8, b = 0.8 }
+    end
+    return { r = 1.0, g = 1.0, b = 1.0 }
+end
+
+local function SetTextColor(label, color)
+    label:SetTextColor(color.r, color.g, color.b, 1.0)
+end
+
 local function CreateUpdateTextMethod(frame)
 
     frame.CalculateSize = function(self)
@@ -118,12 +133,14 @@ local function CreateUpdateTextMethod(frame)
         local text = getMoneyString(amount)
         self.label:SetText(text)
 
+        local color = getSignColor(amount)
+        SetTextColor(self.label, color)
+
         self:SetFrameSize()
     end
 end
 
 local function SetText(amount)
-    local frame = ns.frame
     if not frame then return end
 
     frame:UpdateFrameAndText(amount)
@@ -131,7 +148,7 @@ end
 
 local function createFrame()
 
-    local frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
 
     SetPosition(frame)
     SetFrameStrata(frame)
@@ -142,8 +159,7 @@ local function createFrame()
     CreateLabel(frame)
     CreateUpdateTextMethod(frame)
 
-    ns.frame = frame
-    ns.frame:Show()
+    frame:Show()
 end
 
 local function onVariablesLoaded(_)
@@ -152,24 +168,24 @@ local function onVariablesLoaded(_)
 end
 
 local function onFrameCreated(_)
-    print (name .. ": Frame created.")
     SetText(ns.session)
 end
 
 local function onSessionMoneyChanged(_, sessionMoney)
-    local frame = ns.frame
     if not frame then return end
 
     SetText(sessionMoney)
 end
 
 local function onSettingChanged(_, key)
+    if not frame then return end
+
     if (key == "width" or key == "dynamicWidth" or key == "fontSize") then
-        ns.frame:SetFrameSize()
+        frame:SetFrameSize()
     elseif (key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity") then
-        ns.frame:SetFrameAlpha()
+        frame:SetFrameAlpha()
     elseif (key == "backdrop") then
-        ns.frame:SetBackdropAlpha()
+        frame:SetBackdropAlpha()
     end
 end
 

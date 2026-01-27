@@ -9,23 +9,15 @@ local function openSettings()
     end
 end
 
-local function clearSessionRequest()
-    ns:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
-end
-
-local function historyRequest()
-    ns:TriggerEvent(name .. "_HISTORY_REQUESTED")
-end
-
 SlashCmdList.BETTERGOLDCOUNTER = function(msg)
     msg = (msg or ""):match("^%s*(.-)%s*$"):lower()
 
     if msg == "" or msg == "config" or msg == "options" or msg == "settings" then
-        return openSettings()
+        openSettings()
     elseif msg == "clear" or msg == "clear session" or msg == "reset" or msg == "reset session" then
-        return clearSessionRequest()
+        ns:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
     elseif msg == "history" then
-        return historyRequest()
+        ns:TriggerEvent(name .. "_HISTORY_REQUESTED")
     else
         print("|cffffd200" .. name  .. ":|r Unknown Command:", msg)
     end
