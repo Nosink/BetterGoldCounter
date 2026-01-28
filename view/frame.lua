@@ -49,7 +49,7 @@ local function SetBackdrop(frame)
     frame.SetBackdropAlpha = function (self)
         local backdropAlpha = settings.GetBackdropAlpha()
         self:SetBackdropColor(0, 0, 0, backdropAlpha)
-        self:SetBackdropBorderColor(0.5, 0.5, 0.5, backdropAlpha)
+        self:SetBackdropBorderColor(1.0, 1.0, 1.0, backdropAlpha)
     end
     frame:SetBackdrop(backdrop)
     frame:SetBackdropAlpha()

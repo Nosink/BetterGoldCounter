@@ -11,6 +11,4 @@
 ## X-Category: Library
 ## X-License: Public Domain
 
-libs/LibStub/LibStub.lua
-
 LibEvent.lua

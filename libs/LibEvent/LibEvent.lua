@@ -1,36 +1,86 @@
 local MAJOR, MINOR = "LibEvent", 1
 if not LibStub then error(MAJOR .. " requires LibStub") end
 
-local LibEvent = LibStub:NewLibrary(MAJOR, MINOR)
-if not LibEvent then return end
+local Bus = LibStub:NewLibrary(MAJOR, MINOR)
+if not Bus then return end
+
+local type = type
+local pcall = pcall
+local tostring = tostring
+local geterrorhandler = geterrorhandler
+
 
 local handlers = {}
 local onceHandlers = {}
 local nativeEvents = {}
+local hookedFuncs = {}
+local hookedScripts = setmetatable({}, { __mode = "k" })
+
+
+local BusProto = {}
+BusProto.__index = BusProto
 
 local frame = CreateFrame("Frame")
 
+local function safeCall(fn, ...)
+    local ok, err = pcall(fn, ...)
+    if not ok then
+        geterrorhandler()(err)
+        return false, err
+    end
+    return true
+end
+
+local function fastCall(fn, ...)
+    return fn(...)
+end
+
+BusProto.safe = true
+
+local function unregisterEvents(eventName, handlerList)
+    if #handlerList == 0 then
+        handlers[eventName] = nil
+        if nativeEvents[eventName] then
+            local ok, err = pcall(frame.UnregisterEvent, frame, eventName)
+            if not ok then
+                local msg = string.format("LibEvent: UnregisterEvent failed for '%s': %s", tostring(eventName), tostring(err))
+                geterrorhandler()(msg)
+            end
+            nativeEvents[eventName] = nil
+        end
+        onceHandlers[eventName] = nil
+    end
+end
+
 local function dispatch(_, event, ...)
     local list = handlers[event]
-    if not list then
-        return
-    end
+    if not list then return end
 
-    -- Snapshot handlers to avoid iteration issues if list mutates during dispatch
-    local snapshot = {}
+    local call = Bus.safe and safeCall or fastCall
+
     for i = 1, #list do
-        snapshot[i] = list[i]
-    end
-
-    for i = 1, #snapshot do
-        local entry = snapshot[i]
-        if entry and entry.fn then
-            local ok, err = pcall(entry.fn, event, ...)
-            if not ok then
-                geterrorhandler()(err)
-            end
+        local entry = list[i]
+        if entry and entry.active then
+            call(entry.fn, event, ...)
         end
     end
+
+    if list.dirty then
+        local write = 1
+        for read = 1, #list do
+            local entry = list[read]
+            if entry and entry.active then
+                list[write] = entry
+                write = write + 1
+            end
+        end
+        for i = write, #list do
+            list[i] = nil
+        end
+        list.dirty = false
+    end
+
+    unregisterEvents(event, list)
 end
 
 local function registerEvents(eventName)
@@ -49,23 +99,25 @@ local function registerEvents(eventName)
     return handlerList
 end
 
-function LibEvent:RegisterEvent(eventName, handler)
+function BusProto:RegisterEvent(eventName, handler)
     if type(eventName) ~= "string" or type(handler) ~= "function" then return end
 
     local handlerList = registerEvents(eventName)
 
-    -- Prevent duplicate registrations for the same handler
     for i = 1, #handlerList do
         if handlerList[i].fn == handler then
             return
         end
     end
 
-    local eventHandler = { fn = handler }
+    local eventHandler = { fn = handler, active = true }
     table.insert(handlerList, eventHandler)
+    return function()
+        BusProto:UnregisterEvent(eventName, handler)
+    end
 end
 
-function LibEvent:RegisterEventOnce(eventName, handler)
+function BusProto:RegisterEventOnce(eventName, handler)
     if type(eventName) ~= "string" or type(handler) ~= "function" then return end
 
     local map = onceHandlers[eventName]
@@ -75,58 +127,49 @@ function LibEvent:RegisterEventOnce(eventName, handler)
     end
 
     if map[handler] then
-        -- already registered once for this handler
         return
     end
 
     local function onceWrapper(event, ...)
-        -- unregister this wrapper before invoking to guarantee single fire
-        LibEvent:UnregisterEvent(eventName, onceWrapper)
-        -- clear mapping
+        Bus:UnregisterEvent(eventName, onceWrapper)
         map[handler] = nil
-        local ok, err = pcall(handler, event, ...)
-        if not ok then
-            geterrorhandler()(err)
-        end
+        safeCall(handler, event, ...)
     end
 
     map[handler] = onceWrapper
-    LibEvent:RegisterEvent(eventName, onceWrapper)
+    Bus:RegisterEvent(eventName, onceWrapper)
+    return function()
+        Bus:UnregisterEvent(eventName, onceWrapper)
+    end
 end
 
 local function clearHandler(handlerList, handler)
-    for i = #handlerList, 1, -1 do
-        if handlerList[i].fn == handler then
-            table.remove(handlerList, i)
+    for i = 1, #handlerList do
+        local entry = handlerList[i]
+        if entry.fn == handler then
+            entry.active = false
+            handlerList.dirty = true
         end
     end
 end
 
-local function unregisterEvents(eventName, handlerList)
-    if #handlerList == 0 then
-        handlers[eventName] = nil
-        if nativeEvents[eventName] then
-            local ok, err = pcall(frame.UnregisterEvent, frame, eventName)
-            if not ok then
-                local msg = string.format("LibEvent: UnregisterEvent failed for '%s': %s", tostring(eventName), tostring(err))
-                geterrorhandler()(msg)
-            end
-            nativeEvents[eventName] = nil
-        end
-        -- clear any once-handlers bookkeeping for this event
-        onceHandlers[eventName] = nil
-    end
-end
 
-function LibEvent:UnregisterEvent(eventName, handler)
+function BusProto:UnregisterEvent(eventName, handler)
     local handlerList = handlers[eventName]
     if not handlerList or type(handler) ~= "function" then return end
 
-    clearHandler(handlerList, handler)
+    local proxy = handler
+    local map = onceHandlers[eventName]
+    if map and map[handler] then
+        proxy = map[handler]
+        map[handler] = nil
+    end
+
+    clearHandler(handlerList, proxy)
     unregisterEvents(eventName, handlerList)
 end
 
-function LibEvent:UnregisterAll(eventName)
+function BusProto:UnregisterAll(eventName)
     if type(eventName) ~= "string" then return end
     local handlerList = handlers[eventName]
     if not handlerList then return end
@@ -137,42 +180,48 @@ function LibEvent:UnregisterAll(eventName)
     unregisterEvents(eventName, handlerList)
 end
 
-function LibEvent:TriggerEvent(eventName, ...)
+function BusProto:TriggerEvent(eventName, ...)
     if type(eventName) ~= "string" then return end
 
     dispatch(frame, eventName, ...)
 end
 
-function LibEvent:IsRegistered(eventName)
+function BusProto:IsRegistered(eventName)
     if type(eventName) ~= "string" then return false end
     local handlerList = handlers[eventName]
     if not handlerList then return false end
     return #handlerList > 0
 end
 
-function LibEvent:HookSecureFunc(frame, funcName, handler)
+function BusProto:HookSecureFunc(frame, funcName, handler)
     if type(frame) == "string" then
         frame, funcName, handler = _G, frame, funcName
     end
 
     if type(handler) ~= "function" then return end
 
+    local key = tostring(frame) .. ":" .. tostring(funcName)
+    if hookedFuncs[key] then return end
+    hookedFuncs[key] = true
+
     hooksecurefunc(frame, funcName, function(...)
-        local ok, err = pcall(handler, ...)
-        if not ok then
-            geterrorhandler()(err)
-        end
+        safeCall(handler, ...)
     end)
 end
 
-function LibEvent:HookScript(frame, funcName, handler)
+function BusProto:HookScript(frame, funcName, handler)
     if type(frame) ~= "table" or type(funcName) ~= "string" or type(handler) ~= "function" then return end
 
+    local set = hookedScripts[frame]
+    if not set then
+        set = {}
+        hookedScripts[frame] = set
+    end
+    if set[funcName] then return end
+    set[funcName] = true
+
     frame:HookScript(funcName, function(...)
-        local ok, err = pcall(handler, ...)
-        if not ok then
-            geterrorhandler()(err)
-        end
+        safeCall(handler, ...)
     end)
 end
 

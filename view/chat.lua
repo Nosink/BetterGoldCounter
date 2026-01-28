@@ -13,10 +13,10 @@ local function onHistoryRequested()
     for key, value in pairs(records) do
         local amount = tonumber(value) or 0
         total = total + amount
-        print(string.format("%s: %s %s", tostring(key or ""), utils.GetSignSymbol(abs(amount)), GetMoneyString(amount)))
+        print(string.format("%s: %s %s", tostring(key or ""), utils.GetSignSymbol(amount), GetMoneyString(abs(amount))))
     end
     local sign = utils.GetSignSymbol(total)
-    print(string.format("%s: %s %s", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(total)))
+    print(string.format("%s: %s %s", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(abs(total))))
 end
 
 LibEvent:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)
