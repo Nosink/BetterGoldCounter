@@ -99,9 +99,9 @@ end
 
 local function getSignColor(amount)
     if amount > 0 then
-        return { r = 0.8, g = 1.0, b = 0.8 }
+        return { r = 0.6, g = 1.0, b = 0.6 }
     elseif amount < 0 then
-        return { r = 1.0, g = 0.8, b = 0.8 }
+        return { r = 1.0, g = 0.6, b = 0.6 }
     end
     return { r = 1.0, g = 1.0, b = 1.0 }
 end
@@ -114,7 +114,7 @@ local function CreateUpdateTextMethod(frame)
 
     frame.CalculateSize = function(self)
         local height = settings.GetFontSize() * 1.8
-        local dynamicWidth = self.label:GetStringWidth() + settings.GetFontSize() * 1.5
+        local dynamicWidth = self.label:GetStringWidth() + settings.GetFontSize() * 2.2
         local width = settings.IsDynamicWidth() and dynamicWidth or settings.GetWidth()
         return width, height
     end
@@ -122,7 +122,8 @@ local function CreateUpdateTextMethod(frame)
     frame.SetFrameSize = function(self)
         local fontName, _, flags = self.label:GetFont()
         self.label:SetFont(tostring(fontName), settings.GetFontSize(), flags)
-        self.label:SetPoint("RIGHT", self, "RIGHT", -settings.GetFontSize() * 0.8, 0)
+        local alignment, offset = settings.GetFontPoint()
+        self.label:SetPoint(alignment, self, alignment, offset, 0)
 
         local width, height = self:CalculateSize()
         self:SetSize(width, height)

@@ -8,6 +8,21 @@ local defaultFontSize = 8
 local defaultWidth = 50
 local defaultFadeDuration = 0.01
 
+function ns.settings.GetFontPoint()
+    local offset = 0
+    local alignment = ns.database.fontAlignment
+    if alignment == "LEFT" or alignment == "RIGHT" or alignment == "CENTER" then
+        if alignment == "LEFT" then
+            offset = ns.settings.GetFontSize() * 0.6
+        elseif alignment == "RIGHT" then
+            offset = -ns.settings.GetFontSize() * 1.5
+        elseif alignment == "CENTER" then
+            offset = 0
+        end
+    end
+    return alignment, offset
+end
+
 function ns.settings.IsFrameUnlocked()
     return not ns.database.locked
 end
