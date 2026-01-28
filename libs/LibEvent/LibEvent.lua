@@ -1,26 +1,17 @@
 local MAJOR, MINOR = "LibEvent", 1
 if not LibStub then error(MAJOR .. " requires LibStub") end
 
-local Bus = LibStub:NewLibrary(MAJOR, MINOR)
-if not Bus then return end
+local LibEvent = LibStub:NewLibrary(MAJOR, MINOR)
+if not LibEvent then return end
 
-local type = type
+-------------------------------------------------
+-- Utilities
+-------------------------------------------------
+
 local pcall = pcall
-local tostring = tostring
 local geterrorhandler = geterrorhandler
-
-
-local handlers = {}
-local onceHandlers = {}
-local nativeEvents = {}
-local hookedFuncs = {}
-local hookedScripts = setmetatable({}, { __mode = "k" })
-
-
-local BusProto = {}
-BusProto.__index = BusProto
-
-local frame = CreateFrame("Frame")
+local type = type
+local tostring = tostring
 
 local function safeCall(fn, ...)
     local ok, err = pcall(fn, ...)
@@ -35,28 +26,73 @@ local function fastCall(fn, ...)
     return fn(...)
 end
 
-BusProto.safe = true
+-------------------------------------------------
+-- Bus Prototype
+-------------------------------------------------
 
-local function unregisterEvents(eventName, handlerList)
-    if #handlerList == 0 then
-        handlers[eventName] = nil
-        if nativeEvents[eventName] then
-            local ok, err = pcall(frame.UnregisterEvent, frame, eventName)
-            if not ok then
-                local msg = string.format("LibEvent: UnregisterEvent failed for '%s': %s", tostring(eventName), tostring(err))
-                geterrorhandler()(msg)
-            end
-            nativeEvents[eventName] = nil
-        end
-        onceHandlers[eventName] = nil
-    end
+local BusProto = {}
+BusProto.__index = BusProto
+
+-------------------------------------------------
+-- Bus Creation
+-------------------------------------------------
+
+local function NewBus(name, safe)
+    local frame = CreateFrame("Frame")
+
+    local bus = setmetatable({
+        name         = name or "Bus",
+        frame        = frame,
+        handlers     = {},
+        onceHandlers = {},
+        nativeEvents = {},
+        safe         = safe or true,
+    }, BusProto)
+
+    frame:SetScript("OnEvent", function(_, event, ...)
+        bus:dispatch(event, ...)
+    end)
+
+    return bus
 end
 
-local function dispatch(_, event, ...)
-    local list = handlers[event]
+-------------------------------------------------
+-- Internal helpers (instance methods)
+-------------------------------------------------
+
+function BusProto:registerEvent(event)
+    local list = self.handlers[event]
+    if list then return list end
+
+    list = {}
+    self.handlers[event] = list
+
+    local ok = pcall(self.frame.RegisterEvent, self.frame, event)
+    if ok then
+        self.nativeEvents[event] = true
+    end
+
+    return list
+end
+
+function BusProto:unregisterEvents(event, list)
+    if #list > 0 then return end
+
+    self.handlers[event] = nil
+
+    if self.nativeEvents[event] then
+        pcall(self.frame.UnregisterEvent, self.frame, event)
+        self.nativeEvents[event] = nil
+    end
+
+    self.onceHandlers[event] = nil
+end
+
+function BusProto:dispatch(event, ...)
+    local list = self.handlers[event]
     if not list then return end
 
-    local call = Bus.safe and safeCall or fastCall
+    local call = self.safe and safeCall or fastCall
 
     for i = 1, #list do
         local entry = list[i]
@@ -80,124 +116,119 @@ local function dispatch(_, event, ...)
         list.dirty = false
     end
 
-    unregisterEvents(event, list)
+    self:unregisterEvents(event, list)
 end
 
-local function registerEvents(eventName)
-    if handlers[eventName] then
-        return handlers[eventName]
+function BusProto:clearHandler(event, fn)
+    local list = self.handlers[event]
+    if not list then return end
+
+    for i = 1, #list do
+        local entry = list[i]
+        if entry.fn == fn then
+            entry.active = false
+            list.dirty = true
+        end
     end
-
-    local handlerList = {}
-    handlers[eventName] = handlerList
-
-    local ok = pcall(frame.RegisterEvent, frame, eventName)
-    if ok then
-        nativeEvents[eventName] = true
-    end
-
-    return handlerList
 end
 
-function BusProto:RegisterEvent(eventName, handler)
-    if type(eventName) ~= "string" or type(handler) ~= "function" then return end
+-------------------------------------------------
+-- Public Bus API
+-------------------------------------------------
 
-    local handlerList = registerEvents(eventName)
+function BusProto:RegisterEvent(event, fn)
+    if type(event) ~= "string" or type(fn) ~= "function" then return end
 
-    for i = 1, #handlerList do
-        if handlerList[i].fn == handler then
+    local list = self:registerEvent(event)
+
+    for i = 1, #list do
+        if list[i].fn == fn then
             return
         end
     end
 
-    local eventHandler = { fn = handler, active = true }
-    table.insert(handlerList, eventHandler)
+    local entry = { fn = fn, active = true }
+    list[#list + 1] = entry
+
+    local bus = self
     return function()
-        BusProto:UnregisterEvent(eventName, handler)
+        bus:UnregisterEvent(event, fn)
     end
 end
 
-function BusProto:RegisterEventOnce(eventName, handler)
-    if type(eventName) ~= "string" or type(handler) ~= "function" then return end
+function BusProto:RegisterEventOnce(event, fn)
+    if type(event) ~= "string" or type(fn) ~= "function" then return end
 
-    local map = onceHandlers[eventName]
+    local map = self.onceHandlers[event]
     if not map then
         map = {}
-        onceHandlers[eventName] = map
+        self.onceHandlers[event] = map
     end
 
-    if map[handler] then
-        return
+    if map[fn] then return end
+
+    local bus = self
+    local function wrapper(evt, ...)
+        bus:UnregisterEvent(event, wrapper)
+        map[fn] = nil
+        safeCall(fn, evt, ...)
     end
 
-    local function onceWrapper(event, ...)
-        Bus:UnregisterEvent(eventName, onceWrapper)
-        map[handler] = nil
-        safeCall(handler, event, ...)
-    end
+    map[fn] = wrapper
+    self:RegisterEvent(event, wrapper)
 
-    map[handler] = onceWrapper
-    Bus:RegisterEvent(eventName, onceWrapper)
     return function()
-        Bus:UnregisterEvent(eventName, onceWrapper)
+        bus:UnregisterEvent(event, wrapper)
     end
 end
 
-local function clearHandler(handlerList, handler)
-    for i = 1, #handlerList do
-        local entry = handlerList[i]
-        if entry.fn == handler then
-            entry.active = false
-            handlerList.dirty = true
-        end
-    end
-end
+function BusProto:UnregisterEvent(event, fn)
+    local list = self.handlers[event]
+    if not list or type(fn) ~= "function" then return end
 
-
-function BusProto:UnregisterEvent(eventName, handler)
-    local handlerList = handlers[eventName]
-    if not handlerList or type(handler) ~= "function" then return end
-
-    local proxy = handler
-    local map = onceHandlers[eventName]
-    if map and map[handler] then
-        proxy = map[handler]
-        map[handler] = nil
+    local proxy = fn
+    local map = self.onceHandlers[event]
+    if map and map[fn] then
+        proxy = map[fn]
+        map[fn] = nil
     end
 
-    clearHandler(handlerList, proxy)
-    unregisterEvents(eventName, handlerList)
+    self:clearHandler(event, proxy)
+    self:unregisterEvents(event, list)
 end
 
-function BusProto:UnregisterAll(eventName)
-    if type(eventName) ~= "string" then return end
-    local handlerList = handlers[eventName]
-    if not handlerList then return end
-    for i = #handlerList, 1, -1 do
-        handlerList[i] = nil
+function BusProto:UnregisterAll(event)
+    local list = self.handlers[event]
+    if not list then return end
+
+    for i = 1, #list do
+        list[i] = nil
     end
-    onceHandlers[eventName] = nil
-    unregisterEvents(eventName, handlerList)
+
+    self.onceHandlers[event] = nil
+    self:unregisterEvents(event, list)
 end
 
-function BusProto:TriggerEvent(eventName, ...)
-    if type(eventName) ~= "string" then return end
-
-    dispatch(frame, eventName, ...)
+function BusProto:TriggerEvent(event, ...)
+    self:dispatch(event, ...)
 end
 
-function BusProto:IsRegistered(eventName)
-    if type(eventName) ~= "string" then return false end
-    local handlerList = handlers[eventName]
-    if not handlerList then return false end
-    return #handlerList > 0
+function BusProto:IsRegistered(event)
+    local list = self.handlers[event]
+    return list and #list > 0 or false
 end
+
+-------------------------------------------------
+-- Hooks (shared, not per-bus)
+-------------------------------------------------
+
+local hookedFuncs = {}
+local hookedScripts = setmetatable({}, { __mode = "k" })
 
 function BusProto:HookSecureFunc(frame, funcName, handler)
     if type(frame) == "string" then
         frame, funcName, handler = _G, frame, funcName
     end
-
     if type(handler) ~= "function" then return end
 
     local key = tostring(frame) .. ":" .. tostring(funcName)
@@ -209,20 +240,71 @@ function BusProto:HookSecureFunc(frame, funcName, handler)
     end)
 end
 
-function BusProto:HookScript(frame, funcName, handler)
-    if type(frame) ~= "table" or type(funcName) ~= "string" or type(handler) ~= "function" then return end
+function BusProto:HookScript(frame, script, handler)
+    if type(frame) ~= "table" or type(handler) ~= "function" then return end
 
     local set = hookedScripts[frame]
     if not set then
         set = {}
         hookedScripts[frame] = set
     end
-    if set[funcName] then return end
-    set[funcName] = true
+    if set[script] then return end
+    set[script] = true
 
-    frame:HookScript(funcName, function(...)
+    frame:HookScript(script, function(...)
         safeCall(handler, ...)
     end)
 end
 
-frame:SetScript("OnEvent", dispatch)
+-------------------------------------------------
+-- Global Bus Singleton
+-------------------------------------------------
+
+local GlobalBus
+
+local function GetGlobalBus()
+    if not GlobalBus then
+        GlobalBus = NewBus("Global", true)
+    end
+    return GlobalBus
+end
+
+-------------------------------------------------
+-- LibEvent API proxies
+-------------------------------------------------
+
+function LibEvent:NewBus(...)
+    return NewBus(...)
+end
+
+function LibEvent:RegisterEvent(...)
+    return GetGlobalBus():RegisterEvent(...)
+end
+
+function LibEvent:RegisterEventOnce(...)
+    return GetGlobalBus():RegisterEventOnce(...)
+end
+
+function LibEvent:UnregisterEvent(...)
+    return GetGlobalBus():UnregisterEvent(...)
+end
+
+function LibEvent:UnregisterAll(...)
+    return GetGlobalBus():UnregisterAll(...)
+end
+
+function LibEvent:TriggerEvent(...)
+    return GetGlobalBus():TriggerEvent(...)
+end
+
+function LibEvent:IsRegistered(...)
+    return GetGlobalBus():IsRegistered(...)
+end
+
+function LibEvent:HookSecureFunc(...)
+    return GetGlobalBus():HookSecureFunc(...)
+end
+
+function LibEvent:HookScript(...)
+    return GetGlobalBus():HookScript(...)
+end
