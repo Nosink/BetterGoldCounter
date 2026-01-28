@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 
 local utils = ns.utils
 local settings = ns.settings

@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 
 SLASH_BETTERGOLDCOUNTER1 = "/bettergoldcounter"
 SLASH_BETTERGOLDCOUNTER2 = "/bgc"

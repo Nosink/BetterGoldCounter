@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 
 function ns.builder.CreateEditBox(self, text, key)
     local label = self.optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")

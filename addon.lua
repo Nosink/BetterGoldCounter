@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 
 local function onAddonLoaded(_, addonName)
     if addonName ~= name then return end

@@ -1,5 +1,5 @@
 local _, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 local L = ns.L
 
 local builder = ns.builder

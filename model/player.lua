@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEvent")
+local LibEvent = LibStub("LibEventBus-1.0")
 
 local storedSession = 0
 local dateTime = tostring(date("%Y-%m-%d"))
