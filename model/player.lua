@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEventBus-1.0")
+local bus = LibStub("LibEventBus-1.0")
 
 local storedSession = 0
 local dateTime = tostring(date("%Y-%m-%d"))
@@ -25,7 +25,7 @@ local function onReloadingUI(_)
     ns.session = ns.database.session
     ns.database.session = nil
 
-    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
@@ -33,7 +33,7 @@ local function onPlayerMoneyChanged(_, newAmount)
     ns.session = ns.session + session
     ns.money = newAmount
 
-    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerLogout(_)
@@ -48,13 +48,13 @@ end
 local function onClearSessionRequested(_)
     onPlayerLogout(_)
     onAddonLoaded(_)
-    LibEvent:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-LibEvent:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
-LibEvent:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
-LibEvent:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
-LibEvent:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
-LibEvent:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
-LibEvent:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
-LibEvent:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
+bus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
+bus:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
+bus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
+bus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
+bus:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
+bus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
+bus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)

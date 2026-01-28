@@ -251,7 +251,7 @@ local function GetGlobalBus()
     return globalBus
 end
 
--- LibEvent API proxies
+-- bus API proxies
 function lib:NewBus(...)
     return NewBus(...)
 end

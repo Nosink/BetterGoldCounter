@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEventBus-1.0")
+local bus = LibStub("LibEventBus-1.0")
 
 function ns.builder.CreateEditBox(self, text, key)
     local label = self.optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -19,7 +19,7 @@ function ns.builder.CreateEditBox(self, text, key)
     editBox:SetScript("OnTextChanged", function(self, userInput)
         if not userInput then return end
         ns.database[key] = self:GetText()
-        LibEvent:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
+        bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
     editBox:SetScript("OnEnterPressed", function(self)

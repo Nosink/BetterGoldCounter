@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEventBus-1.0")
+local bus = LibStub("LibEventBus-1.0")
 
 function ns.builder.CreateCheckBox(self, text, key, default)
     local checkBox = CreateFrame("CheckButton", name .. "Options" .. key .. "CB", self.optionsPanel, "InterfaceOptionsCheckButtonTemplate")
@@ -15,7 +15,7 @@ function ns.builder.CreateCheckBox(self, text, key, default)
 
     checkBox:SetScript("OnClick", function(self)
         ns.database[key] = self:GetChecked() or false
-        LibEvent:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
+        bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
     checkBox.FetchFromDB = function(self)

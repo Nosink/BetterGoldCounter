@@ -1,5 +1,5 @@
 local name, ns = ...
-local LibEvent = LibStub("LibEventBus-1.0")
+local bus = LibStub("LibEventBus-1.0")
 
 function ns.builder.CreateSlider(self, text, key)
     local slider = CreateFrame("Slider", name .. "Options" .. key .. "SL", self.optionsPanel, "OptionsSliderTemplate")
@@ -27,7 +27,7 @@ function ns.builder.CreateSlider(self, text, key)
     slider:SetScript("OnValueChanged", function(self, value)
         ns.database[key] = value
         updateValueLabel(value)
-        LibEvent:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
+        bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
     slider.FetchFromDB = function(self)

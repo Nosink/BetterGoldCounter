@@ -1,5 +1,5 @@
 local _, ns = ...
-local LibEvent = LibStub("LibEventBus-1.0")
+local bus = LibStub("LibEventBus-1.0")
 local L = ns.L
 
 local builder = ns.builder
@@ -45,4 +45,4 @@ local function onShow()
     fadeInOpacitySL:FetchFromDB()
 end
 
-LibEvent:HookScript(builder.optionsPanel, "OnShow", onShow)
+bus:HookScript(builder.optionsPanel, "OnShow", onShow)
