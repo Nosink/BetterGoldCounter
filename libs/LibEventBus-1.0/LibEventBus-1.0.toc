@@ -9,6 +9,6 @@
 
 ## X-Website: https://www.curseforge.com/wow/addons/libevent
 ## X-Category: Library
-## X-License: Public Domain
+## X-License: GNU General Public License v3.0
 
 LibEventBus-1.0.lua
