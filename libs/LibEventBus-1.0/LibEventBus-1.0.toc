@@ -2,7 +2,7 @@
 ## LoadOnDemand: 1
 
 ## Title: LibEvent
-## Notes: Event bus handler for 
+## Notes: Event bus handler for pub/sub, hooks and WoW events
 
 ## Version: 1.0
 ## Author: Nosink Ð
@@ -11,4 +11,4 @@
 ## X-Category: Library
 ## X-License: Public Domain
 
-LibEvent.lua
+LibEventBus-1.0.lua

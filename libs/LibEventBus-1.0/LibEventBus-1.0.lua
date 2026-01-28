@@ -1,4 +1,4 @@
-local MAJOR, MINOR = "LibEvent", 1
+local MAJOR, MINOR = "LibEventBus-1.0", 1
 if not LibStub then error(MAJOR .. " requires LibStub") end
 
 local LibEvent = LibStub:NewLibrary(MAJOR, MINOR)
@@ -12,6 +12,7 @@ local pcall = pcall
 local geterrorhandler = geterrorhandler
 local type = type
 local tostring = tostring
+local setmetatable = setmetatable
 
 local function safeCall(fn, ...)
     local ok, err = pcall(fn, ...)
@@ -275,6 +276,10 @@ end
 
 function LibEvent:NewBus(...)
     return NewBus(...)
+end
+
+function LibEvent:GetGlobalBus()
+    return GetGlobalBus()
 end
 
 function LibEvent:RegisterEvent(...)
