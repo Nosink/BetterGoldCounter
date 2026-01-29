@@ -18,8 +18,7 @@ ns.defaults = {
     fadeDuration = 0.1,
 
     session = nil,
-    autoClean = true,
-    cleanFrequency = "SESSION", -- "NEVER", "SESSION", "DAILY"
+    cleanFrequency = "SESSION", -- "SESSION", "DAILY"
 
     records = { },
 

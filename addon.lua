@@ -1,8 +1,17 @@
 local name, _ = ...
 local bus = LibStub("LibEventBus-1.0")
 
+local function SetDailyReset()
+    local timeLeft = (24 - tonumber(date("%H"))) * 3600 - tonumber(date("%M")) * 60 - tonumber(date("%S")) + 1
+    C_Timer.After(timeLeft, function()
+        bus:TriggerEvent(name .. "_DAILY_RESET")
+    end)
+end
+
 local function onAddonLoaded(_, addonName)
     if addonName ~= name then return end
+
+    SetDailyReset()
 
     bus:TriggerEvent(name .. "_ADDON_LOADED")
 end

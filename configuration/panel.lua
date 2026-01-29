@@ -51,9 +51,7 @@ local fontAlignmentDD = builder:CreateDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TI
 }, "LEFT")
 
 builder:CreateSection(L["LKEY_OPTIONS_SESSION_TITLE"])
-local autoCleanCB = builder:CreateCheckBox(L["LKEY_OPTIONS_AUTO_CLEAN_CB"], "autoClean")
 local cleanFrequencyDD = builder:CreateDropDown(L["LKEY_OPTIONS_AUTO_CLEAN_TITLE"], "cleanFrequency", {
-    { value = "NEVER", text = L["LKEY_OPTIONS_CLEAN_FREQ_NEVER"]},
     { value = "SESSION", text = L["LKEY_OPTIONS_CLEAN_FREQ_SESSION"]},
     { value = "DAILY", text = L["LKEY_OPTIONS_CLEAN_FREQ_DAILY"]},
 }, "LEFT")
@@ -76,7 +74,6 @@ local function onShow()
     backdropCB:FetchFromDB()
     fontAlignmentDD:FetchFromDB()
     fontSizeEB:FetchFromDB()
-    autoCleanCB:FetchFromDB()
     cleanFrequencyDD:FetchFromDB()
     dynamicWidthCB:FetchFromDB()
     widthEB:FetchFromDB()

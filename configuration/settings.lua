@@ -82,3 +82,11 @@ function ns.settings.GetFadeDuration()
     if not fadeDuration or fadeDuration < defaultFadeDuration then fadeDuration = defaultFadeDuration end
     return fadeDuration
 end
+
+function ns.settings.GetCleanFrequency()
+    return ns.database.cleanFrequency
+end
+
+function ns.settings.IsAutoCleanEnabled()
+    return ns.database.autoClean
+end
