@@ -1,4 +1,4 @@
-local _, ns = ...
+local name, ns = ...
 local bus = LibStub("LibEventBus-1.0")
 local L = ns.L
 
@@ -14,8 +14,29 @@ builder:CreateTitle(L["LKEY_OPTIONS_TITLE"])
 builder:CreateSection(L["LKEY_OPTIONS_POSITION_TITLE"])
 local lockedCB = builder:CreateCheckBox(L["LKEY_OPTIONS_LOCKED_CB"], "locked")
 
-builder:CreateButton("Test", function()
-    print("Button Clicked!")
+builder:CreateButton("Up", function()
+    local x, y = ns.settings.GetPosition()
+    local newY = y + 1
+    ns.settings.SetPosition(x, newY)
+    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+end)
+builder:CreateButton("Down", function()
+    local x, y = ns.settings.GetPosition()
+    local newY = y - 1
+    ns.settings.SetPosition(x, newY)
+    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+end)
+builder:CreateButton("Left", function()
+    local x, y = ns.settings.GetPosition()
+    local newX = x - 1
+    ns.settings.SetPosition(newX, y)
+    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+end)
+builder:CreateButton("Right", function()
+    local x, y = ns.settings.GetPosition()
+    local newX = x + 1
+    ns.settings.SetPosition(newX, y)
+    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end)
 
 builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"])

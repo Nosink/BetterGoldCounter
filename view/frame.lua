@@ -7,8 +7,12 @@ local settings = ns.settings
 local frame = nil
 
 local function SetPosition(frame)
-    local x, y = settings.GetPosition()
-    frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
+    frame.SetFramePosition = function(self)
+        local x, y = settings.GetPosition()
+        frame:ClearAllPoints()
+        frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
+    end
+    frame:SetFramePosition()
 end
 
 local function SetFrameStrata(frame)
@@ -183,7 +187,9 @@ end
 local function onSettingChanged(_, key)
     if not frame then return end
 
-    if (key == "width" or key == "dynamicWidth" or key == "fontSize" or key == "fontAlignment") then
+    if (key == "xy") then
+        frame:SetFramePosition()
+    elseif (key == "width" or key == "dynamicWidth" or key == "fontSize" or key == "fontAlignment" or key == "xy") then
         frame:SetFrameSize()
     elseif (key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity") then
         frame:SetFrameAlpha()
