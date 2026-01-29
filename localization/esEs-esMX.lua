@@ -17,6 +17,18 @@ if ns.locale == "esES" or ns.locale == "esMX" then
     L["LKEY_OPTIONS_FONT_SIZE_TITLE"] = "Tamaño de Fuente"
     L["LKEY_OPTIONS_FONT_SIZE_EB"] = "Tamaño de Fuente (mín 8): "
 
+    L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"] = "Alineación de Fuente"
+    L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] = "Izquierda"
+    L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] = "Centro"
+    L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"] = "Derecha"
+
+    L["LKEY_OPTIONS_SESSION_TITLE"] = "Sesión"
+    L["LKEY_OPTIONS_AUTO_CLEAN_CB"] = "Habilitar Limpieza Automática"
+    L["LKEY_OPTIONS_AUTO_CLEAN_TITLE"] = "Frecuencia de Limpieza Automática"
+    L["LKEY_OPTIONS_CLEAN_FREQ_NEVER"] = "Nunca"
+    L["LKEY_OPTIONS_CLEAN_FREQ_SESSION"] = "Al Iniciar Sesión"
+    L["LKEY_OPTIONS_CLEAN_FREQ_DAILY"] = "Diario"
+
     L["LKEY_OPTIONS_FADE_TITLE"] = "Desvanecer"
     L["LKEY_OPTIONS_FADE_CB"] = "Habilitar Efecto de Desvanecimiento"
     L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"] = "Opacidad al Desvanecer"

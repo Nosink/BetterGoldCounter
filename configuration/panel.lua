@@ -14,11 +14,28 @@ builder:CreateTitle(L["LKEY_OPTIONS_TITLE"])
 builder:CreateSection(L["LKEY_OPTIONS_POSITION_TITLE"])
 local lockedCB = builder:CreateCheckBox(L["LKEY_OPTIONS_LOCKED_CB"], "locked")
 
+builder:CreateButton("Test", function()
+    print("Button Clicked!")
+end)
+
 builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"])
 local backdropCB = builder:CreateCheckBox(L["LKEY_OPTIONS_BACKDROP_CB"], "backdrop")
 
 builder:CreateSection(L["LKEY_OPTIONS_FONT_SIZE_TITLE"])
 local fontSizeEB = builder:CreateEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize")
+local fontAlignmentDD = builder:CreateDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment", {
+    { value = "LEFT", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"]},
+    { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"]},
+    { value = "RIGHT", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"]},
+}, "LEFT")
+
+builder:CreateSection(L["LKEY_OPTIONS_SESSION_TITLE"])
+local autoCleanCB = builder:CreateCheckBox(L["LKEY_OPTIONS_AUTO_CLEAN_CB"], "autoClean")
+local cleanFrequencyDD = builder:CreateDropDown(L["LKEY_OPTIONS_AUTO_CLEAN_TITLE"], "cleanFrequency", {
+    { value = "NEVER", text = L["LKEY_OPTIONS_CLEAN_FREQ_NEVER"]},
+    { value = "SESSION", text = L["LKEY_OPTIONS_CLEAN_FREQ_SESSION"]},
+    { value = "DAILY", text = L["LKEY_OPTIONS_CLEAN_FREQ_DAILY"]},
+}, "LEFT")
 
 builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])
 local dynamicWidthCB = builder:CreateCheckBox(L["LKEY_OPTIONS_DYNAMIC_WIDTH_CB"], "dynamicWidth")
@@ -36,7 +53,10 @@ builder:Register()
 local function onShow()
     lockedCB:FetchFromDB()
     backdropCB:FetchFromDB()
+    fontAlignmentDD:FetchFromDB()
     fontSizeEB:FetchFromDB()
+    autoCleanCB:FetchFromDB()
+    cleanFrequencyDD:FetchFromDB()
     dynamicWidthCB:FetchFromDB()
     widthEB:FetchFromDB()
     fadeCB:FetchFromDB()

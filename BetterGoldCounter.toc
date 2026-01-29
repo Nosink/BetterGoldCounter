@@ -27,6 +27,8 @@ database/database.lua
 configuration/builder.lua
 configuration/frames/checkbox.lua
 configuration/frames/editbox.lua
+configuration/frames/dropDown.lua
+configuration/frames/button.lua
 configuration/frames/slider.lua
 # --------------------
 configuration/panel.lua

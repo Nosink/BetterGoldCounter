@@ -123,6 +123,7 @@ local function CreateUpdateTextMethod(frame)
         local fontName, _, flags = self.label:GetFont()
         self.label:SetFont(tostring(fontName), settings.GetFontSize(), flags)
         local alignment, offset = settings.GetFontPoint()
+        self.label:ClearAllPoints()
         self.label:SetPoint(alignment, self, alignment, offset, 0)
 
         local width, height = self:CalculateSize()
@@ -182,7 +183,7 @@ end
 local function onSettingChanged(_, key)
     if not frame then return end
 
-    if (key == "width" or key == "dynamicWidth" or key == "fontSize") then
+    if (key == "width" or key == "dynamicWidth" or key == "fontSize" or key == "fontAlignment") then
         frame:SetFrameSize()
     elseif (key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity") then
         frame:SetFrameAlpha()
