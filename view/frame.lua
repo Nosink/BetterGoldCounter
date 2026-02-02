@@ -97,7 +97,7 @@ end
 
 local function getMoneyString(amount)
     local sign = utils.GetSignSymbol(tonumber(amount))
-    local moneyString = GetMoneyString(abs(amount))
+    local moneyString = GetMoneyString(math.abs(amount))
     return (sign .. " " .. moneyString)
 end
 

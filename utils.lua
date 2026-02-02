@@ -4,6 +4,9 @@ local _, ns = ...
 ns.utils = ns.utils or {}
 
 function ns.utils.GetSignSymbol(amount)
+    if type(amount) ~= "number" then
+        return ""
+    end
     return amount < 0 and "-" or amount > 0 and "+" or ""
 end
 
