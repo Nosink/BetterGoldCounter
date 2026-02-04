@@ -54,23 +54,25 @@ local function onReloadingUI(_)
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-local function storeDailyRecord(dateKey)
+local function storeDailyRecord(dateKey, amount)
     ns.database.records = ns.database.records or { }
     ns.database.records[ns.unitName] = ns.database.records[ns.unitName] or { }
-    ns.database.records[ns.unitName][dateKey] = ns.database.dailySession
+    ns.database.records[ns.unitName][dateKey] = amount
 end
 
-local function storeRecords(dateKey)
+local function storeRecords()
     ns.database.dailySession = ns.database.dailySession + ns.session
     ns.database.allTimeSession = ns.database.allTimeSession + ns.session
-    storeDailyRecord(dateKey)
+    storeDailyRecord(loginDate, ns.database.dailySession)
 end
 
 local function onClearSessionRequested(_)
     local dateKey = tostring(date("%Y-%m-%d"))
-    storeRecords(dateKey)
+    storeDailyRecord(dateKey, ns.database.dailySession + ns.session)
     updateMoney()
     ns.session = 0
+    ns.database.dailySession = 0
+    ns.database.allTimeSession = 0
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -97,9 +99,11 @@ local function updateLoginDate()
 end
 
 local function onDailyReset(_)
-    storeRecords(loginDate)
+    print(loginDate)
+    storeRecords()
     wipeDailySession()
     updateLoginDate()
+    print(loginDate)
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
