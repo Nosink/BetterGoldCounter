@@ -39,6 +39,7 @@ local function onPlayerMoneyChanged(_, newAmount)
     local session = newAmount - ns.money
     ns.session = ns.session + session
     ns.money = newAmount
+    ns.database.allTimeSession = ns.database.allTimeSession + session
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
