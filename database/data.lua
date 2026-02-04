@@ -18,8 +18,12 @@ ns.defaults = {
     fadeDuration = 0.1,
 
     session = nil,
+    dailySession = 0,
+    allTimeSession = 0,
+
     cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
 
+    lastLogin = nil,
     records = { },
 
 }

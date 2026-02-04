@@ -54,6 +54,7 @@ builder:CreateSection(L["LKEY_OPTIONS_SESSION_TITLE"])
 local cleanFrequencyDD = builder:CreateDropDown(L["LKEY_OPTIONS_AUTO_CLEAN_TITLE"], "cleanFrequency", {
     { value = "SESSION", text = L["LKEY_OPTIONS_CLEAN_FREQ_SESSION"]},
     { value = "DAILY", text = L["LKEY_OPTIONS_CLEAN_FREQ_DAILY"]},
+    { value = "NEVER", text = L["LKEY_OPTIONS_CLEAN_FREQ_NEVER"]},
 }, "LEFT")
 
 builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])

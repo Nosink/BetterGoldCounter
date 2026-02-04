@@ -19,6 +19,8 @@ SlashCmdList.BETTERGOLDCOUNTER = function(msg)
         bus:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
     elseif msg == "history" then
         bus:TriggerEvent(name .. "_HISTORY_REQUESTED")
+    elseif msg == "wipe" then
+        bus:TriggerEvent(name .. "_WIPE_REQUESTED", ns.session)
     else
         print("|cffffd200" .. name  .. ":|r Unknown Command:", msg)
     end
