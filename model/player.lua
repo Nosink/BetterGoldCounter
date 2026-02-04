@@ -1,6 +1,8 @@
 local name, ns = ...
 local bus = LibStub("LibEventBus-1.0")
 
+local L = ns.L
+
 local settings = ns.settings
 
 local loginDate = tostring(date("%Y-%m-%d"))
@@ -9,28 +11,26 @@ local function onAddonLoaded(_)
     ns.unitName = UnitName("player")
 end
 
+local function updateSession()
+    local frequency = settings.GetCleanFrequency()
+    if frequency == "SESSION" then
+        ns.session = ns.database.session or 0
+    elseif frequency == "DAILY" then
+        ns.session = ns.database.dailySession or 0
+    elseif frequency == "NEVER" then
+        ns.session = ns.database.allTimeSession or 0
+    else
+        ns.session = 0
+    end
+end
+
 local function updateMoney()
     ns.money = GetMoney()
 end
 
-local function getStoredSession()
-    local frequency = settings.GetCleanFrequency()
-    if frequency == "DAILY" then
-        if ns.database.lastLogin ~= loginDate then
-            ns.database.dailySession = 0
-        end
-        return ns.database.dailySession
-    end
-    if frequency == "NEVER" then
-        return ns.database.allTimeSession
-    end
-    return 0
-end
-
 local function onVariablesLoaded(_)
     updateMoney()
-    ns.session = getStoredSession()
-    ns.database.lastLogin = loginDate
+    updateSession()
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -54,21 +54,42 @@ local function onReloadingUI(_)
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-local function storeDailySession(dateTime)
-    local dailySession = ns.database.dailySession + ns.session
+local function storeDailyRecord(dateKey)
     ns.database.records = ns.database.records or { }
     ns.database.records[ns.unitName] = ns.database.records[ns.unitName] or { }
-    ns.database.records[ns.unitName][dateTime] = dailySession
+    ns.database.records[ns.unitName][dateKey] = ns.database.dailySession
 end
 
-local function onPlayerLogout(_)
-
-    local now = tostring(date("%Y-%m-%d"))
-
+local function storeRecords(dateKey)
     ns.database.dailySession = ns.database.dailySession + ns.session
     ns.database.allTimeSession = ns.database.allTimeSession + ns.session
+    storeDailyRecord(dateKey)
+end
 
-    storeDailySession(now)
+local function onClearSessionRequested(_)
+    local dateKey = tostring(date("%Y-%m-%d"))
+    storeRecords(dateKey)
+    updateMoney()
+    ns.session = 0
+
+    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+end
+
+local function onWipeRequested(_)
+    ns.session = 0
+    ns.database.dailySession = 0
+    ns.database.allTimeSession = 0
+    ns.database.records = ns.database.records or { }
+    ns.database.records[ns.unitName] = { }
+    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+end
+
+local function wipeDailySession()
+    local frequency = settings.GetCleanFrequency()
+    if frequency ~= "DAILY" then return end
+    print(L["LKEY_CLEARING_DAILY_SESSION"] .. ns.database.dailySession .. L["LKEY_CLEARED"])
+    ns.session = 0
+    ns.database.dailySession = 0
 end
 
 local function updateLoginDate()
@@ -76,38 +97,10 @@ local function updateLoginDate()
 end
 
 local function onDailyReset(_)
+    storeRecords(loginDate)
+    wipeDailySession()
+    updateLoginDate()
 
-    storeDailySession(loginDate)
-    updateLoginDate();
-
-    local frequency = settings.GetCleanFrequency()
-    if frequency == "DAILY" then
-        print(name .. ": " .. "La sesión diaria ha sido reiniciada." .. "Hoy se genero un total de " .. ns.database.dailySession + ns.session .. " de oro.")
-        ns.session = 0
-    end
-
-    ns.database.dailySession = 0
-
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
-end
-
-local function onClearSessionRequested(_)
-    onPlayerLogout(_)
-    onVariablesLoaded(_)
-    ns.session = 0
-    local frequency = settings.GetCleanFrequency()
-    if frequency == "NEVER" then
-        ns.database.allTimeSession = 0
-    end
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
-end
-
-local function onWipeRequested(_)
-    ns.database.dailySession = 0
-    ns.database.allTimeSession = 0
-    ns.database.records = ns.database.records or { }
-    ns.database.records[ns.unitName] = { }
-    ns.session = 0
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
@@ -118,8 +111,6 @@ bus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
 
 bus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
 bus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
-
-bus:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
 
 bus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
 bus:RegisterEvent(name .. "_WIPE_REQUESTED", onWipeRequested)

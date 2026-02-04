@@ -34,3 +34,6 @@ L["LKEY_OPTIONS_FADE_IN_OPACITY_SLIDER"] = "Fade In Opacity"
 L["LKEY_OPTIONS_FADE_DURATION_EB"] = "Fade Duration (seconds): "
 
 L["LKEY_TOTAL_CHAT_HISTORY"] = "Total"
+
+L["LKEY_CLEARING_DAILY_SESSION"] = "Clearing daily session: "
+L["LKEY_CLEARED"] = " cleared."

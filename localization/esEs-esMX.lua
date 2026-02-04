@@ -36,4 +36,7 @@ if ns.locale == "esES" or ns.locale == "esMX" then
     L["LKEY_OPTIONS_FADE_DURATION_EB"] = "Duración del Desvanecimiento (segundos): "
 
     L["LKEY_TOTAL_CHAT_HISTORY"] = "Total"
+
+    L["LKEY_CLEARING_DAILY_SESSION"] = "Limpiando sesión diaria: "
+    L["LKEY_CLEARED"] = " limpiada."
 end
