@@ -11,7 +11,7 @@ local function onAddonLoaded(_)
     ns.unitName = UnitName("player")
 end
 
-local function updateSession()
+local function updateLocalSession()
     local frequency = settings.GetCleanFrequency()
     if frequency == "SESSION" then
         ns.session = ns.database.session or 0
@@ -30,16 +30,21 @@ end
 
 local function onVariablesLoaded(_)
     updateMoney()
-    updateSession()
+    updateLocalSession()
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+end
+
+local function updateDatabaseSessions(amount)
+    ns.database.dailySession = ns.database.dailySession or 0
+    ns.database.allTimeSession = ns.database.allTimeSession or 0
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
     local session = newAmount - ns.money
     ns.session = ns.session + session
     ns.money = newAmount
-    ns.database.allTimeSession = ns.database.allTimeSession + session
+    updateDatabaseSessions(session)
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -59,12 +64,6 @@ local function storeDailyRecord(dateKey, amount)
     ns.database.records = ns.database.records or { }
     ns.database.records[ns.unitName] = ns.database.records[ns.unitName] or { }
     ns.database.records[ns.unitName][dateKey] = amount
-end
-
-local function storeRecords()
-    ns.database.dailySession = ns.database.dailySession + ns.session
-    ns.database.allTimeSession = ns.database.allTimeSession + ns.session
-    storeDailyRecord(loginDate, ns.database.dailySession)
 end
 
 local function onClearSessionRequested(_)
@@ -100,11 +99,10 @@ local function updateLoginDate()
 end
 
 local function onDailyReset(_)
-    print(loginDate)
-    storeRecords()
+
+    storeDailyRecord(loginDate, ns.database.dailySession)
     wipeDailySession()
     updateLoginDate()
-    print(loginDate)
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
