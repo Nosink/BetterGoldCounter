@@ -24,8 +24,8 @@ local function onHistoryRequested()
     print ("session: " .. utils.GetSignSymbol(session) .. GetMoneyString(abs(session)))
     local dailySession = ns.database.dailySession or 0
     print ("dailySession: " .. utils.GetSignSymbol(dailySession) .. GetMoneyString(abs(dailySession)))
-    local allTimeSession = ns.database.allTimeSession or 0
-    print ("allTimeSession: " .. utils.GetSignSymbol(allTimeSession) .. GetMoneyString(abs(allTimeSession)))
+    local allTimeRecord = ns.database.allTimeRecord or 0
+    print ("allTimeRecord: " .. utils.GetSignSymbol(allTimeRecord) .. GetMoneyString(abs(allTimeRecord)))
     print("------ xx ------")
 end
 

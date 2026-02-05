@@ -18,7 +18,7 @@ local function updateLocalSession()
     elseif frequency == "DAILY" then
         ns.session = ns.database.dailySession or 0
     elseif frequency == "NEVER" then
-        ns.session = ns.database.allTimeSession or 0
+        ns.session = ns.database.allTimeRecord or 0
     else
         ns.session = 0
     end
@@ -36,26 +36,34 @@ local function onVariablesLoaded(_)
 end
 
 local function updateDatabaseSessions(amount)
-    ns.database.dailySession = ns.database.dailySession or 0
-    ns.database.allTimeSession = ns.database.allTimeSession or 0
+    ns.database.dailySession = ns.database.dailySession + amount
+    ns.database.allTimeRecord = ns.database.allTimeRecord + amount
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
     local session = newAmount - ns.money
     ns.session = ns.session + session
     ns.money = newAmount
+
     updateDatabaseSessions(session)
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerLeavingWorld(_)
-    ns.database.session = ns.session
+    local session = ns.session
+    local daily = ns.database.dailySession or 0
+    local allTime = ns.database.allTimeRecord or 0
+
+    ns.database.temporal = { session = session , daily = daily, allTime = allTime }
 end
 
 local function onReloadingUI(_)
-    ns.session = ns.database.session
-    ns.database.session = nil
+    ns.session = ns.database.temporal and ns.database.temporal.session or 0
+    ns.database.dailySession = ns.database.temporal and ns.database.temporal.daily or 0
+    ns.database.allTimeRecord = ns.database.temporal and ns.database.temporal.allTime or 0
+
+    ns.database.temporal = nil
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -70,9 +78,10 @@ local function onClearSessionRequested(_)
     local dateKey = tostring(date("%Y-%m-%d"))
     storeDailyRecord(dateKey, ns.database.dailySession + ns.session)
     updateMoney()
+
     ns.session = 0
     ns.database.dailySession = 0
-    ns.database.allTimeSession = 0
+    ns.database.allTimeRecord = 0
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -80,7 +89,7 @@ end
 local function onWipeRequested(_)
     ns.session = 0
     ns.database.dailySession = 0
-    ns.database.allTimeSession = 0
+    ns.database.allTimeRecord = 0
     ns.database.records = ns.database.records or { }
     ns.database.records[ns.unitName] = { }
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
