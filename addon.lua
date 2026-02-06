@@ -1,6 +1,8 @@
 local name, ns = ...
 local bus = LibStub("LibEventBus-1.0")
 
+bus:GetGlobalBus():SetDebug(true)
+
 local settings = ns.settings
 
 local dailyResetAction = nil

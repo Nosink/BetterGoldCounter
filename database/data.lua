@@ -19,8 +19,7 @@ ns.defaults = {
 
     temporal = nil,
 
-    dailySession = nil,
-
+    lastLogin = nil,
     cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
 
     records = { },

@@ -24,13 +24,29 @@ local function updateLocalSession()
     end
 end
 
-local function updateMoney()
-    ns.money = GetMoney()
+local function storeDailyRecord(dateKey)
+    ns.database.records = ns.database.records or { }
+    ns.database.records[ns.unitName] = ns.database.records[ns.unitName] or { }
+    ns.database.records[ns.unitName][dateKey] = ns.database.dailySession + (ns.database.records[ns.unitName][dateKey] or 0)
+end
+
+local function evaluateLastLogin()
+    local lastLogin = ns.database.lastLogin
+    if not lastLogin then return end
+
+    if lastLogin ~= loginDate then
+        storeDailyRecord(lastLogin)
+        lastLogin = loginDate
+    end
 end
 
 local function onVariablesLoaded(_)
-    updateMoney()
+    evaluateLastLogin()
     updateLocalSession()
+
+    C_Timer.After(1, function()
+        ns.money = GetMoney()
+    end)
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -43,7 +59,7 @@ end
 local function onPlayerMoneyChanged(_, newAmount)
     local session = newAmount - ns.money
     ns.session = ns.session + session
-    ns.money = newAmount
+    ns.money = GetMoney()
 
     updateDatabaseSessions(session)
 
@@ -55,29 +71,26 @@ local function onPlayerLeavingWorld(_)
     local daily = ns.database.dailySession or 0
     local allTime = ns.database.allTimeRecord or 0
 
-    ns.database.temporal = { session = session , daily = daily, allTime = allTime }
+    ns.database.lastLogin = loginDate
+
+    ns.database.temporal = ns.database.temporal or { }
+    ns.database.temporal[ns.unitName] = { session = session , daily = daily, allTime = allTime }
 end
 
 local function onReloadingUI(_)
-    ns.session = ns.database.temporal and ns.database.temporal.session or 0
-    ns.database.dailySession = ns.database.temporal and ns.database.temporal.daily or 0
-    ns.database.allTimeRecord = ns.database.temporal and ns.database.temporal.allTime or 0
+    ns.session = ns.database.temporal and ns.database.temporal[ns.unitName].session or 0
+    ns.database.dailySession = ns.database.temporal and ns.database.temporal[ns.unitName].daily or 0
+    ns.database.allTimeRecord = ns.database.temporal and ns.database.temporal[ns.unitName].allTime or 0
 
     ns.database.temporal = nil
 
     bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-local function storeDailyRecord(dateKey, amount)
-    ns.database.records = ns.database.records or { }
-    ns.database.records[ns.unitName] = ns.database.records[ns.unitName] or { }
-    ns.database.records[ns.unitName][dateKey] = amount
-end
 
 local function onClearSessionRequested(_)
     local dateKey = tostring(date("%Y-%m-%d"))
-    storeDailyRecord(dateKey, ns.database.dailySession + ns.session)
-    updateMoney()
+    storeDailyRecord(dateKey)
 
     ns.session = 0
     ns.database.dailySession = 0
@@ -109,7 +122,7 @@ end
 
 local function onDailyReset(_)
 
-    storeDailyRecord(loginDate, ns.database.dailySession)
+    storeDailyRecord(loginDate)
     wipeDailySession()
     updateLoginDate()
 

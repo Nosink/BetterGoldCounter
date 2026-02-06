@@ -31,12 +31,13 @@ local proto = {}
 proto.__index = proto
 
 -- Bus Creation
-local function NewBus(name, safe)
+local function NewBus(name, safe, debug)
     local frame = CreateFrame("Frame")
 
     local bus = setmetatable({
         name         = name or "Bus",
         frame        = frame,
+        debug        = debug or false,
         handlers     = {},
         onceHandlers = {},
         nativeEvents = {},
@@ -79,6 +80,16 @@ function proto:unregisterEvents(event, list)
     self.onceHandlers[event] = nil
 end
 
+function proto:debugEvent(event, handler, ...)
+    if not self.debug then return end
+
+    local info = debugstack(3, 1, 0)
+    local source = info:match("%s*%[string \"(.-)\"%]") or "unknown"
+    local line = info:match(":(%d+):") or "?"
+    local handlerInfo = tostring(handler)
+    print(string.format("[%s] Event '%s' triggered by %s:%s (handler: %s)", self.name, event, source, line, handlerInfo))
+end
+
 function proto:dispatch(event, ...)
     local list = self.handlers[event]
     if not list then return end
@@ -88,6 +99,7 @@ function proto:dispatch(event, ...)
     for i = 1, #list do
         local entry = list[i]
         if entry and entry.active then
+            proto:debugEvent(event, entry.fn, ...)
             call(entry.fn, event, ...)
         end
     end
@@ -241,12 +253,21 @@ function proto:HookScript(frame, script, handler)
     end)
 end
 
+-- Bus configuration
+function proto:SetDebug(enabled)
+    self.debug = enabled and true or false
+end
+
+function proto:SetSafe(enabled)
+    self.safe = enabled and true or false
+end
+
 -- Global Bus Singleton
 local globalBus
 
 local function GetGlobalBus()
     if not globalBus then
-        globalBus = NewBus("Global", true)
+        globalBus = NewBus("Global", true, false)
     end
     return globalBus
 end

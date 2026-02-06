@@ -11,6 +11,7 @@
 ## SavedVariables: BetterGoldCounterDB
 
 libs/LibEventBus-1.0/LibEventBus-1.0.lua 
+libs/LibOptions-1.0/LibOptions-1.0.lua 
 
 # Module: Localization
 localization/localization.lua
