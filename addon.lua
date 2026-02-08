@@ -1,7 +1,7 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
-BGCBus = bus:NewBus("BGCBus", true, false)
+local LibEventBus = LibStub("LibEventBus-1.0")
+BGCBus = LibEventBus:NewBus("BGCBus", true, false)
 
 local settings = ns.settings
 
