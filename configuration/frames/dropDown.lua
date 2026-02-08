@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 function ns.builder.CreateDropDown(self, text, key, values, default)
     local label = self.optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -47,7 +46,7 @@ function ns.builder.CreateDropDown(self, text, key, values, default)
         UIDropDownMenu_SetText(dropDown, txt)
         if not silent then
             ns.database[key] = val
-            bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
+            BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
         end
     end
 

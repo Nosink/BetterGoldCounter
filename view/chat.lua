@@ -1,5 +1,5 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
+
 local L = ns.L
 
 local utils = ns.utils
@@ -29,4 +29,4 @@ local function onHistoryRequested()
     print("------ xx ------")
 end
 
-bus:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)
+BGCBus:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)

@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 ns.database = ns.database or {}
 ns.databasePC = ns.databasePC or {}
@@ -22,7 +21,7 @@ local function onVariablesLoaded()
     loadDatabase()
     loadDatabasePerCharacter()
 
-    bus:TriggerEvent(name .. "_VARIABLES_LOADED")
+    BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
 end
 
-bus:RegisterEvent("VARIABLES_LOADED", onVariablesLoaded)
+BGCBus:RegisterEvent("VARIABLES_LOADED", onVariablesLoaded)

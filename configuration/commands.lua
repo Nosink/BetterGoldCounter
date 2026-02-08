@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 SLASH_BETTERGOLDCOUNTER1 = "/bettergoldcounter"
 SLASH_BETTERGOLDCOUNTER2 = "/bgc"
@@ -16,11 +15,11 @@ SlashCmdList.BETTERGOLDCOUNTER = function(msg)
     if msg == "" or msg == "config" or msg == "options" or msg == "settings" then
         openSettings()
     elseif msg == "clear" or msg == "clear session" or msg == "reset" or msg == "reset session" then
-        bus:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
+        BGCBus:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
     elseif msg == "history" then
-        bus:TriggerEvent(name .. "_HISTORY_REQUESTED")
+        BGCBus:TriggerEvent(name .. "_HISTORY_REQUESTED")
     elseif msg == "wipe" then
-        bus:TriggerEvent(name .. "_WIPE_REQUESTED", ns.session)
+        BGCBus:TriggerEvent(name .. "_WIPE_REQUESTED", ns.session)
     else
         print("|cffffd200" .. name  .. ":|r Unknown Command:", msg)
     end

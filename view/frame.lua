@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 local utils = ns.utils
 local settings = ns.settings
@@ -171,7 +170,7 @@ end
 
 local function onVariablesLoaded(_)
     createFrame()
-    bus:TriggerEvent(name .. "_FRAME_CREATED")
+    BGCBus:TriggerEvent(name .. "_FRAME_CREATED")
 end
 
 local function onFrameCreated(_)
@@ -198,7 +197,7 @@ local function onSettingChanged(_, key)
     end
 end
 
-bus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
-bus:RegisterEvent(name .. "_FRAME_CREATED", onFrameCreated)
-bus:RegisterEvent(name .. "_SESSION_MONEY_CHANGED", onSessionMoneyChanged)
-bus:RegisterEvent(name .. "_SETTINGS_CHANGED", onSettingChanged)
+BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
+BGCBus:RegisterEvent(name .. "_FRAME_CREATED", onFrameCreated)
+BGCBus:RegisterEvent(name .. "_SESSION_MONEY_CHANGED", onSessionMoneyChanged)
+BGCBus:RegisterEvent(name .. "_SETTINGS_CHANGED", onSettingChanged)

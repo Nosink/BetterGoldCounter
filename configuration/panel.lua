@@ -1,5 +1,5 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
+
 local L = ns.L
 
 local builder = ns.builder
@@ -18,25 +18,25 @@ builder:CreateButton("Up", function()
     local x, y = ns.settings.GetPosition()
     local newY = y + 1
     ns.settings.SetPosition(x, newY)
-    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+    BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end)
 builder:CreateButton("Down", function()
     local x, y = ns.settings.GetPosition()
     local newY = y - 1
     ns.settings.SetPosition(x, newY)
-    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+    BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end)
 builder:CreateButton("Left", function()
     local x, y = ns.settings.GetPosition()
     local newX = x - 1
     ns.settings.SetPosition(newX, y)
-    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+    BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end)
 builder:CreateButton("Right", function()
     local x, y = ns.settings.GetPosition()
     local newX = x + 1
     ns.settings.SetPosition(newX, y)
-    bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+    BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end)
 
 builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"])
@@ -84,4 +84,4 @@ local function onShow()
     fadeInOpacitySL:FetchFromDB()
 end
 
-bus:HookScript(builder.optionsPanel, "OnShow", onShow)
+BGCBus:HookScript(builder.optionsPanel, "OnShow", onShow)

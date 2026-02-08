@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 ns.settings = ns.settings or {}
 
@@ -37,7 +36,7 @@ end
 
 function ns.settings.SetPosition(x, y)
     ns.database.x, ns.database.y = x, y
-     bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+     BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end
 
 function ns.settings.GetBackdropAlpha()

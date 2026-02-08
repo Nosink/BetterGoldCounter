@@ -1,5 +1,4 @@
 local name, ns = ...
-local bus = LibStub("LibEventBus-1.0")
 
 local L = ns.L
 
@@ -48,7 +47,7 @@ local function onVariablesLoaded(_)
         ns.money = GetMoney()
     end)
 
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function updateDatabaseSessions(amount)
@@ -63,7 +62,7 @@ local function onPlayerMoneyChanged(_, newAmount)
 
     updateDatabaseSessions(session)
 
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onPlayerLeavingWorld(_)
@@ -84,7 +83,7 @@ local function onReloadingUI(_)
 
     ns.database.temporal = nil
 
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 
@@ -96,7 +95,7 @@ local function onClearSessionRequested(_)
     ns.database.dailySession = 0
     ns.database.allTimeRecord = 0
 
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onWipeRequested(_)
@@ -105,7 +104,7 @@ local function onWipeRequested(_)
     ns.database.allTimeRecord = 0
     ns.database.records = ns.database.records or { }
     ns.database.records[ns.unitName] = { }
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function wipeDailySession()
@@ -117,7 +116,9 @@ local function wipeDailySession()
 end
 
 local function updateLoginDate()
+    print ("old login date: " .. loginDate)
     loginDate = tostring(date("%Y-%m-%d"))
+    print ("new login date: " .. loginDate)
 end
 
 local function onDailyReset(_)
@@ -126,18 +127,18 @@ local function onDailyReset(_)
     wipeDailySession()
     updateLoginDate()
 
-    bus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
-bus:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
-bus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
+BGCBus:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
+BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
 
-bus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
+BGCBus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
 
-bus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
-bus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
+BGCBus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
+BGCBus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
 
-bus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
-bus:RegisterEvent(name .. "_WIPE_REQUESTED", onWipeRequested)
+BGCBus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
+BGCBus:RegisterEvent(name .. "_WIPE_REQUESTED", onWipeRequested)
 
-bus:RegisterEvent(name .. "_DAILY_RESET", onDailyReset)
+BGCBus:RegisterEvent(name .. "_DAILY_RESET", onDailyReset)

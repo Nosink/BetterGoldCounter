@@ -11,7 +11,8 @@
 ## SavedVariables: BetterGoldCounterDB
 
 libs/LibEventBus-1.0/LibEventBus-1.0.lua 
-libs/LibOptions-1.0/LibOptions-1.0.lua 
+
+addon.lua
 
 # Module: Localization
 localization/localization.lua
@@ -39,7 +40,6 @@ configuration/settings.lua
 
 # Addon - Core
 utils.lua
-addon.lua
 
 # MVC Player Money Counter
 model/player.lua
