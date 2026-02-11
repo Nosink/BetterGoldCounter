@@ -37,3 +37,6 @@ L["LKEY_TOTAL_CHAT_HISTORY"] = "Total"
 
 L["LKEY_CLEARING_DAILY_SESSION"] = "Clearing daily session: "
 L["LKEY_CLEARED"] = " cleared."
+
+L["LKEY_CHAT_G_HISTORY"] = "Gold"
+L["LKEY_CHAT_HISTORY"] = "History"

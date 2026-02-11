@@ -3,6 +3,17 @@ local name, ns = ...
 local LibEventBus = LibStub("LibEventBus-1.0")
 BGCBus = LibEventBus:NewBus("BGCBus", true, false)
 
+local LibSharedVariables = LibStub("LibSavedVariables-1.0")
+local dbOptions = {
+    defaults = ns.defaults,
+    defaultsPC = ns.defaultsPC,
+    onLoadCallback = function(db, pcdb)
+        BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED", db, pcdb)
+    end,
+}
+DB = LibSharedVariables:New(name, dbOptions)
+DB:Init()
+
 local settings = ns.settings
 
 local dailyResetAction = nil
@@ -16,7 +27,6 @@ end
 
 local function setDailyReset()
     local timeLeft = (24 - tonumber(date("%H"))) * 3600 - tonumber(date("%M")) * 60 - tonumber(date("%S")) + 1
-    print ("Next daily reset in " .. timeLeft .. " seconds.")
     dailyResetAction = C_Timer.NewTimer(timeLeft, function()
         BGCBus:TriggerEvent(name .. "_DAILY_RESET")
         clearDailyReset()

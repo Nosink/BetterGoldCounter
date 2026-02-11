@@ -39,4 +39,7 @@ if ns.locale == "esES" or ns.locale == "esMX" then
 
     L["LKEY_CLEARING_DAILY_SESSION"] = "Limpiando sesión diaria: "
     L["LKEY_CLEARED"] = " limpiada."
+
+    L["LKEY_CHAT_G_HISTORY"] = "Oro"
+    L["LKEY_CHAT_HISTORY"] = "Historial"
 end
