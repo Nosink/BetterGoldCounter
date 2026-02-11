@@ -6,13 +6,12 @@ BGCBus = LibEventBus:NewBus("BGCBus", true, false)
 local LibSharedVariables = LibStub("LibSavedVariables-1.0")
 local dbOptions = {
     defaults = ns.defaults,
-    defaultsPC = ns.defaultsPC,
-    onLoadCallback = function(db, pcdb)
-        BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED", db, pcdb)
+    onLoadCallback = function(db, _)
+        BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED", db)
     end,
 }
-DB = LibSharedVariables:New(name, dbOptions)
-DB:Init()
+Database = LibSharedVariables:New(name, dbOptions)
+Database:Init()
 
 local settings = ns.settings
 

@@ -14,19 +14,22 @@ local tostring = tostring
 local setmetatable = setmetatable
 local _G = _G
 
--- Internal prototype for instances
-local Instance = {}
-Instance.__index = Instance
+-- Prototype
+local proto = {}
+proto.__index = proto
 
-function Instance:GetDB()
+-- Public API
+function proto:GetDB()
 	return _G[self.dbName]
 end
 
-function Instance:GetPCDB()
+-- Get Per-Character Database
+function proto:GetPCDB()
 	return _G[self.pcdbName]
 end
 
-function Instance:Load()
+-- Load and Initialization
+function proto:Load()
 	_G[self.dbName] = setmetatable(_G[self.dbName] or {}, { __index = self.defaults or {} })
 
 	if self.pcdbName then
@@ -44,7 +47,7 @@ function Instance:Load()
 	end
 end
 
-function Instance:Init()
+function proto:Init()
 	-- Ensure tables exist and are usable immediately
 	_G[self.dbName] = _G[self.dbName] or {}
 	setmetatable(_G[self.dbName], { __index = self.defaults or {} })
@@ -65,11 +68,7 @@ function Instance:Init()
 	return self
 end
 
--- Public API: create a new saved variables instance
--- addonName: string, ns: table (addon namespace), opts: table
--- opts.defaults: table, opts.defaultsPC: table (optional)
--- opts.dbName: string (defaults to addonName .. "DB")
--- opts.pcdbName: string (defaults to addonName .. "PCDB")
+-- Api Proxies
 function lib:New(addonName, opts)
 	if type(addonName) ~= "string" then error(major .. ": addonName must be a string") end
 	if type(opts) ~= "table" then error(major .. ": opts must be a table") end
@@ -78,10 +77,10 @@ function lib:New(addonName, opts)
 		addonName = addonName,
 		defaults = opts.defaults or {},
 		defaultsPC = opts.defaultsPC or {},
-		dbName = opts.dbName or (addonName .. "DB"),
+		dbName = opts.dbName or (addonName .. "Database"),
 		pcdbName = opts.pcdbName or (addonName .. "PCDB"),
 		onLoadCallback = opts.onLoadCallback or nil,
 	}
-	return setmetatable(instance, Instance)
+	return setmetatable(instance, proto)
 end
 

@@ -45,7 +45,7 @@ function ns.builder.CreateDropDown(self, text, key, values, default)
         UIDropDownMenu_SetSelectedValue(dropDown, val)
         UIDropDownMenu_SetText(dropDown, txt)
         if not silent then
-            DB:GetDB()[key] = val
+            Database:GetDB()[key] = val
             BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
         end
     end
@@ -64,7 +64,7 @@ function ns.builder.CreateDropDown(self, text, key, values, default)
         end
     end)
 
-    local initial = DB:GetDB()[key]
+    local initial = Database:GetDB()[key]
     if initial == nil then initial = default end
     if initial ~= nil then
         setSelection(initial, true)
@@ -73,7 +73,7 @@ function ns.builder.CreateDropDown(self, text, key, values, default)
     end
 
     dropDown.FetchFromDB = function(self)
-        local v = DB:GetDB()[key]
+        local v = Database:GetDB()[key]
         if v ~= nil then
             setSelection(v, true)
         end
@@ -92,7 +92,7 @@ function ns.builder.CreateDropDown(self, text, key, values, default)
                 UIDropDownMenu_AddButton(info, level)
             end
         end)
-        local v = DB:GetDB()[key]
+        local v = Database:GetDB()[key]
         if v ~= nil then
             setSelection(v, true)
         elseif options[1] then

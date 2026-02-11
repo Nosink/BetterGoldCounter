@@ -7,8 +7,8 @@ local utils = ns.utils
 local function onHistoryRequested()
     local total = 0
     local records = {}
-    if DB:GetDB() and ns.unitName and DB:GetDB().records and DB:GetDB().records[ns.unitName] then
-        records = DB:GetDB().records[ns.unitName]
+    if Database:GetDB() and ns.unitName and Database:GetDB().records and Database:GetDB().records[ns.unitName] then
+        records = Database:GetDB().records[ns.unitName]
     end
     print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r")
     print("|cff3399ff█ " .. name  .. "|r ~ |cffffeb3b" .. L["LKEY_CHAT_G_HISTORY"] .. "|r " .. L["LKEY_CHAT_HISTORY"])

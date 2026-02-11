@@ -13,11 +13,11 @@ function ns.builder.CreateEditBox(self, text, key)
     editBox:SetAutoFocus(false)
     editBox:SetJustifyH("CENTER")
     editBox:SetSize(45, 22)
-    editBox:SetText(tostring(DB:GetDB()[key]) or "")
+    editBox:SetText(tostring(Database:GetDB()[key]) or "")
 
     editBox:SetScript("OnTextChanged", function(self, userInput)
         if not userInput then return end
-        DB:GetDB()[key] = self:GetText()
+        Database:GetDB()[key] = self:GetText()
         BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
@@ -26,7 +26,7 @@ function ns.builder.CreateEditBox(self, text, key)
     end)
 
     editBox.FetchFromDB = function(self)
-        self:SetText(tostring(DB:GetDB()[key]))
+        self:SetText(tostring(Database:GetDB()[key]))
     end
 
     self.anchor = label

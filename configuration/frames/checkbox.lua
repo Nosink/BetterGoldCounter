@@ -3,7 +3,7 @@ local name, ns = ...
 function ns.builder.CreateCheckBox(self, text, key, default)
     local checkBox = CreateFrame("CheckButton", name .. "Options" .. key .. "CB", self.optionsPanel, "InterfaceOptionsCheckButtonTemplate")
     checkBox:SetPoint("TOPLEFT", self.anchor, "BOTTOMLEFT")
-    checkBox:SetChecked(DB:GetDB()[key] or false)
+    checkBox:SetChecked(Database:GetDB()[key] or false)
 
     local cbText = _G[checkBox:GetName() .. "Text"]
     local font, _, flags = cbText:GetFont()
@@ -13,12 +13,12 @@ function ns.builder.CreateCheckBox(self, text, key, default)
     cbText:SetText(text)
 
     checkBox:SetScript("OnClick", function(self)
-        DB:GetDB()[key] = self:GetChecked() or false
+        Database:GetDB()[key] = self:GetChecked() or false
         BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
     checkBox.FetchFromDB = function(self)
-        self:SetChecked(DB:GetDB()[key] or false)
+        self:SetChecked(Database:GetDB()[key] or false)
     end
 
     self.anchor = checkBox

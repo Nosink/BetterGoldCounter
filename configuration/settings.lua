@@ -9,7 +9,7 @@ local defaultFadeDuration = 0.01
 
 function ns.settings.GetFontPoint()
     local offset = 0
-    local alignment = DB:GetDB().fontAlignment
+    local alignment = Database:GetDB().fontAlignment
     if alignment == "LEFT" or alignment == "RIGHT" or alignment == "CENTER" then
         if alignment == "LEFT" then
             offset = ns.settings.GetFontSize() * 0.6
@@ -23,69 +23,69 @@ function ns.settings.GetFontPoint()
 end
 
 function ns.settings.IsFrameUnlocked()
-    return not DB:GetDB().locked
+    return not Database:GetDB().locked
 end
 
 function ns.settings.GetPosition()
-    if not DB:GetDB().x or not DB:GetDB().y then
+    if not Database:GetDB().x or not Database:GetDB().y then
         local width, height = UIParent:GetSize()
         return math.floor(width / 2), math.floor(height / 2)
     end
-    return tonumber(DB:GetDB().x), tonumber(DB:GetDB().y)
+    return tonumber(Database:GetDB().x), tonumber(Database:GetDB().y)
 end
 
 function ns.settings.SetPosition(x, y)
-    DB:GetDB().x, DB:GetDB().y = x, y
+    Database:GetDB().x, Database:GetDB().y = x, y
      BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end
 
 function ns.settings.GetBackdropAlpha()
-    return DB:GetDB().backdrop and defaultBackdropAlpha or 0.0
+    return Database:GetDB().backdrop and defaultBackdropAlpha or 0.0
 end
 
 function ns.settings.GetFontSize()
-    local fontSize = tonumber(DB:GetDB().fontSize) or defaultFontSize
+    local fontSize = tonumber(Database:GetDB().fontSize) or defaultFontSize
     if not fontSize or fontSize < defaultFontSize then fontSize = defaultFontSize end
     return fontSize
 end
 
 function ns.settings.GetWidth()
-    local width = tonumber(DB:GetDB().width) or defaultWidth
+    local width = tonumber(Database:GetDB().width) or defaultWidth
     if not width or width < defaultWidth then width = defaultWidth end
     return width
 end
 
 function ns.settings.IsDynamicWidth()
-    return DB:GetDB().dynamicWidth
+    return Database:GetDB().dynamicWidth
 end
 
 function ns.settings.IsFadeEnabled()
-    return DB:GetDB().fade
+    return Database:GetDB().fade
 end
 
 function ns.settings.GetFadeOpacity()
-    local db = DB:GetDB()
+    local db = Database:GetDB()
     return db.fade and db.fadeOutOpacity or not db.fade and db.fadeInOpacity
 end
 
 function ns.settings.GetFadeOutOpacity()
-    return DB:GetDB().fadeOutOpacity
+    return Database:GetDB().fadeOutOpacity
 end
 
 function ns.settings.GetFadeInOpacity()
-    return DB:GetDB().fadeInOpacity
+    return Database:GetDB().fadeInOpacity
 end
 
 function ns.settings.GetFadeDuration()
-    local fadeDuration = tonumber(DB:GetDB().fadeDuration) or defaultFadeDuration
+    local fadeDuration = tonumber(Database:GetDB().fadeDuration) or defaultFadeDuration
     if not fadeDuration or fadeDuration < defaultFadeDuration then fadeDuration = defaultFadeDuration end
     return fadeDuration
 end
 
 function ns.settings.GetCleanFrequency()
-    return DB:GetDB().cleanFrequency
+    return Database:GetDB().cleanFrequency
 end
 
 function ns.settings.IsAutoCleanEnabled()
-    return DB:GetDB().autoClean
+    return Database:GetDB().autoClean
 end
