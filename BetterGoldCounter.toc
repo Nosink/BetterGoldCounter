@@ -15,7 +15,6 @@ libs/LibSavedVariables-1.0/LibSavedVariables-1.0.lua
 
 # Addon - Core
 addon.lua
-data.lua
 
 # Module: Localization
 localization/localization.lua

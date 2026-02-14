@@ -69,16 +69,14 @@ function proto:Init()
 end
 
 -- Api Proxies
-function lib:New(addonName, opts)
-	if type(addonName) ~= "string" then error(major .. ": addonName must be a string") end
+function lib:New(opts)
 	if type(opts) ~= "table" then error(major .. ": opts must be a table") end
 
 	local instance = {
-		addonName = addonName,
 		defaults = opts.defaults or {},
 		defaultsPC = opts.defaultsPC or {},
-		dbName = opts.dbName or (addonName .. "Database"),
-		pcdbName = opts.pcdbName or (addonName .. "PCDB"),
+		dbName = opts.dbName or ("Database"),
+		pcdbName = opts.pcdbName or ("DatabasePerCharacter"),
 		onLoadCallback = opts.onLoadCallback or nil,
 	}
 	return setmetatable(instance, proto)
