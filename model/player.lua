@@ -13,24 +13,24 @@ end
 local function updateLocalSession()
     local frequency = settings.GetCleanFrequency()
     if frequency == "SESSION" then
-        ns.session = Database:GetDB().session or 0
+        ns.session = ns.db.session or 0
     elseif frequency == "DAILY" then
-        ns.session = Database:GetDB().dailySession or 0
+        ns.session = ns.db.dailySession or 0
     elseif frequency == "NEVER" then
-        ns.session = Database:GetDB().allTimeRecord or 0
+        ns.session = ns.db.allTimeRecord or 0
     else
         ns.session = 0
     end
 end
 
 local function storeDailyRecord(dateKey)
-    Database:GetDB().records = Database:GetDB().records or { }
-    Database:GetDB().records[ns.unitName] = Database:GetDB().records[ns.unitName] or { }
-    Database:GetDB().records[ns.unitName][dateKey] = Database:GetDB().dailySession + (Database:GetDB().records[ns.unitName][dateKey] or 0)
+    ns.db.records = ns.db.records or { }
+    ns.db.records[ns.unitName] = ns.db.records[ns.unitName] or { }
+    ns.db.records[ns.unitName][dateKey] = ns.db.dailySession + (ns.db.records[ns.unitName][dateKey] or 0)
 end
 
 local function evaluateLastLogin()
-    local lastLogin = Database:GetDB().lastLogin
+    local lastLogin = ns.db.lastLogin
     if not lastLogin then return end
 
     if lastLogin ~= loginDate then
@@ -51,8 +51,8 @@ local function onVariablesLoaded(_)
 end
 
 local function updateDatabaseSessions(amount)
-    Database:GetDB().dailySession = Database:GetDB().dailySession + amount
-    Database:GetDB().allTimeRecord = Database:GetDB().allTimeRecord + amount
+    ns.db.dailySession = ns.db.dailySession + amount
+    ns.db.allTimeRecord = ns.db.allTimeRecord + amount
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
@@ -67,21 +67,21 @@ end
 
 local function onPlayerLeavingWorld(_)
     local session = ns.session
-    local daily = Database:GetDB().dailySession or 0
-    local allTime = Database:GetDB().allTimeRecord or 0
+    local daily = ns.db.dailySession or 0
+    local allTime = ns.db.allTimeRecord or 0
 
-    Database:GetDB().lastLogin = loginDate
+    ns.db.lastLogin = loginDate
 
-    Database:GetDB().temporal = Database:GetDB().temporal or { }
-    Database:GetDB().temporal[ns.unitName] = { session = session , daily = daily, allTime = allTime }
+    ns.db.temporal = ns.db.temporal or { }
+    ns.db.temporal[ns.unitName] = { session = session , daily = daily, allTime = allTime }
 end
 
 local function onReloadingUI(_)
-    ns.session = Database:GetDB().temporal and Database:GetDB().temporal[ns.unitName].session or 0
-    Database:GetDB().dailySession = Database:GetDB().temporal and Database:GetDB().temporal[ns.unitName].daily or 0
-    Database:GetDB().allTimeRecord = Database:GetDB().temporal and Database:GetDB().temporal[ns.unitName].allTime or 0
+    ns.session = ns.db.temporal and ns.db.temporal[ns.unitName].session or 0
+    ns.db.dailySession = ns.db.temporal and ns.db.temporal[ns.unitName].daily or 0
+    ns.db.allTimeRecord = ns.db.temporal and ns.db.temporal[ns.unitName].allTime or 0
 
-    Database:GetDB().temporal = nil
+    ns.db.temporal = nil
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
@@ -92,27 +92,27 @@ local function onClearSessionRequested(_)
     storeDailyRecord(dateKey)
 
     ns.session = 0
-    Database:GetDB().dailySession = 0
-    Database:GetDB().allTimeRecord = 0
+    ns.db.dailySession = 0
+    ns.db.allTimeRecord = 0
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function onWipeRequested(_)
     ns.session = 0
-    Database:GetDB().dailySession = 0
-    Database:GetDB().allTimeRecord = 0
-    Database:GetDB().records = Database:GetDB().records or { }
-    Database:GetDB().records[ns.unitName] = { }
+    ns.db.dailySession = 0
+    ns.db.allTimeRecord = 0
+    ns.db.records = ns.db.records or { }
+    ns.db.records[ns.unitName] = { }
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", ns.session)
 end
 
 local function wipeDailySession()
     local frequency = settings.GetCleanFrequency()
     if frequency ~= "DAILY" then return end
-    print(L["LKEY_CLEARING_DAILY_SESSION"] .. Database:GetDB().dailySession .. L["LKEY_CLEARED"])
+    print(L["LKEY_CLEARING_DAILY_SESSION"] .. ns.db.dailySession .. L["LKEY_CLEARED"])
     ns.session = 0
-    Database:GetDB().dailySession = 0
+    ns.db.dailySession = 0
 end
 
 local function updateLoginDate()

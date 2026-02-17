@@ -3,47 +3,6 @@ local name, ns = ...
 local LibEventBus = LibStub("LibEventBus-1.0")
 BGCBus = LibEventBus:NewBus("BGCBus", true, false)
 
-local LibSharedVariables = LibStub("LibSavedVariables-1.0")
-
-local function handleOnLoadDatabase(db, _)
-    BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED", db)
-end
-
-local defaults = {
-    x = nil,
-    y = nil,
-
-    locked = false,
-    backdrop = true,
-
-    fontSize = 12,
-    fontAlignment = "CENTER",
-    dynamicWidth = true,
-    width = 150,
-
-    fade = true,
-    fadeOutOpacity = 0.5,
-    fadeInOpacity = 1.0,
-    fadeDuration = 0.1,
-
-    temporal = nil,
-
-    lastLogin = nil,
-    cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
-
-    records = { },
-    allTimeRecord = nil,
-
-}
-
-local dbOptions = {
-    dbName = name .. "DB",
-    defaults = defaults,
-    onLoadCallback = handleOnLoadDatabase,
-}
-Database = LibSharedVariables:New(dbOptions)
-Database:Init()
-
 local dailyResetAction = nil
 
 local function clearDailyReset()

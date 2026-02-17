@@ -19,27 +19,39 @@ local proto = {}
 proto.__index = proto
 
 -- Public API
-function proto:GetDB()
-	return _G[self.dbName]
+function proto:getKey(key, default)
+	return self[key] or default
 end
 
--- Get Per-Character Database
-function proto:GetPCDB()
-	return _G[self.pcdbName]
+function proto:setKey(key, value)
+	self[key] = value
+end
+
+function proto:init()
+	_G[self.dbName] = _G[self.dbName] or {}
+	_G[self.pcdbName] = _G[self.pcdbName] or {}
+
+	self.db = setmetatable(_G[self.dbName], { __index = self.defaults or {} })
+	self.dbpc = setmetatable(_G[self.pcdbName], { __index = self.defaultsPC or {} })
 end
 
 -- Load and Initialization
-function proto:Load()
-	_G[self.dbName] = setmetatable(_G[self.dbName] or {}, { __index = self.defaults or {} })
+function proto:load()
 
-	if self.pcdbName then
-		_G[self.pcdbName] = setmetatable(_G[self.pcdbName] or {}, { __index = self.defaultsPC or {} })
+	print (major .. " loading " .. self.name)
+
+	self:init()
+
+	if self.combined then
+		for k, v in pairs(_G[self.pcdbName]) do
+			_G[self.dbName][k] = v
+		end
 	end
 
 	local ok, err = true, nil
 	if self.onLoadCallback then
 		ok, err = pcall(function()
-			self.onLoadCallback(self:GetDB(), self:GetPCDB())
+			self.onLoadCallback(self.db, self.dbpc)
 		end)
 	end
 	if not ok then
@@ -47,38 +59,35 @@ function proto:Load()
 	end
 end
 
-function proto:Init()
-	-- Ensure tables exist and are usable immediately
-	_G[self.dbName] = _G[self.dbName] or {}
-	setmetatable(_G[self.dbName], { __index = self.defaults or {} })
-
-	if self.pcdbName then
-		_G[self.pcdbName] = _G[self.pcdbName] or {}
-		setmetatable(_G[self.pcdbName], { __index = self.defaultsPC or {} })
-	end
-
-	-- Also handle the official VARIABLES_LOADED event for consistency
+function proto:register()
 	local frame = CreateFrame("Frame")
 	frame:RegisterEvent("VARIABLES_LOADED")
 	frame:SetScript("OnEvent", function(_, event)
 		if event == "VARIABLES_LOADED" then
-			self:Load()
+			self:load()
 		end
 	end)
-	return self
 end
 
 -- Api Proxies
-function lib:New(opts)
+function lib:Load(opts)
 	if type(opts) ~= "table" then error(major .. ": opts must be a table") end
 
 	local instance = {
+		name = opts.name or error(major .. ": name is required"),
 		defaults = opts.defaults or {},
 		defaultsPC = opts.defaultsPC or {},
-		dbName = opts.dbName or ("Database"),
-		pcdbName = opts.pcdbName or ("DatabasePerCharacter"),
+		dbName = opts.dbName or (opts.name .. "DB"),
+		pcdbName = opts.pcdbName or (opts.name .. "PCDB"),
+		combined = opts.combined or false,
 		onLoadCallback = opts.onLoadCallback or nil,
 	}
-	return setmetatable(instance, proto)
+
+	setmetatable(instance, proto)
+
+	instance:register()
+	instance:init()
+
+	return instance
 end
 

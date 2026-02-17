@@ -10,10 +10,13 @@
 ## Version: 1.0.0
 ## SavedVariables: BetterGoldCounterDB
 
+# Libraries
+libs/LibStub/LibStub.lua
 libs/LibEventBus-1.0/LibEventBus-1.0.lua
 libs/LibSavedVariables-1.0/LibSavedVariables-1.0.lua
 
 # Addon - Core
+database.lua
 addon.lua
 
 # Module: Localization

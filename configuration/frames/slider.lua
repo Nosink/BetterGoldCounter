@@ -6,7 +6,7 @@ function ns.builder.CreateSlider(self, text, key)
     slider:SetMinMaxValues(0, 1)
     slider:SetValueStep(0.01)
     slider:SetObeyStepOnDrag(true)
-    slider:SetValue(Database:GetDB()[key] or 0)
+    slider:SetValue(ns.db[key] or 0)
 
     local sText = _G[slider:GetName() .. "Text"]
     if sText then sText:SetText(text) end
@@ -17,21 +17,21 @@ function ns.builder.CreateSlider(self, text, key)
 
     local valueText = slider:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     valueText:SetPoint("RIGHT", slider, "RIGHT", 40, 0)
-    valueText:SetText(string.format("%.2f", Database:GetDB()[key] or "0.00"))
+    valueText:SetText(string.format("%.2f", ns.db[key] or "0.00"))
 
     local function updateValueLabel(v)
         valueText:SetText(string.format("%.2f", v or slider:GetValue()))
     end
 
     slider:SetScript("OnValueChanged", function(self, value)
-        Database:GetDB()[key] = value
+        ns.db[key] = value
         updateValueLabel(value)
         BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
     slider.FetchFromDB = function(self)
-        self:SetValue(Database:GetDB()[key] or 0)
-        updateValueLabel(Database:GetDB()[key] or 0)
+        self:SetValue(ns.db[key] or 0)
+        updateValueLabel(ns.db[key] or 0)
     end
 
     self.anchor = slider
