@@ -9,6 +9,7 @@
 ## Author: Nosink Ð
 ## Version: 1.0.0
 ## SavedVariables: BetterGoldCounterDB
+## SavedVariablesPerCharacter: BetterGoldCounterPCDB
 
 # Libraries
 libs/LibStub/LibStub.lua
@@ -18,6 +19,7 @@ libs/LibSavedVariables-1.0/LibSavedVariables-1.0.lua
 # Addon - Core
 database.lua
 addon.lua
+utils.lua
 
 # Module: Localization
 localization/localization.lua
@@ -37,9 +39,6 @@ configuration/panel.lua
 configuration/commands.lua
 configuration/settings.lua
 # --------------------
-
-# Addon - Core
-utils.lua
 
 # MVC Player Money Counter
 model/player.lua

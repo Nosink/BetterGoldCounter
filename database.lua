@@ -1,18 +1,20 @@
 local name, ns = ...
 
+ns.db = ns.db or {}
+
 local LibSharedVariables = LibStub("LibSavedVariables-1.0")
 if not LibSharedVariables then error(name .. " requires LibSavedVariables-1.0") end
 
 local defaults = {
-    x = nil,
-    y = nil,
+    x = GetScreenWidth() / 2,
+    y = GetScreenHeight() / 2,
 
     locked = false,
     backdrop = true,
 
     fontSize = 12,
-    fontAlignment = "CENTER",
-    dynamicWidth = true,
+    fontAlignment = "RIGHT", -- "LEFT", "CENTER", "RIGHT"
+    dynamicWidth = false,
     width = 150,
 
     fade = true,
@@ -22,25 +24,24 @@ local defaults = {
 }
 
 local defaultsPC = {
-    lastLogin = nil,
+    lastLogin = "",
     cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
 
-    temporal = nil,
+    temporal = { },
     records = { },
-    allTimeRecord = nil,
+    allTimeRecord = 0,
 }
 
-local function onLoadCallback(db, _)
-    ns.db = db
+local function onLoadCallback(database, _, _)
+    ns.db = database
     BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
 end
 
-local dbOptions = {
+local options = {
     name = name,
     defaults = defaults,
     defaultsPC = defaultsPC,
-    combined = true,
     onLoadCallback = onLoadCallback,
 }
 
-LibSharedVariables:Load(dbOptions)
+LibSharedVariables:Load(options)

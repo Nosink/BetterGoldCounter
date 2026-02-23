@@ -21,9 +21,7 @@ local function setDailyReset()
     end)
 end
 
-local function onAddonLoaded(_, addonName)
-    if addonName ~= name then return end
-
+local function onVariablesLoaded(_)
     setDailyReset()
 
     BGCBus:TriggerEvent(name .. "_ADDON_LOADED")
@@ -54,7 +52,7 @@ local function onSettingsChanged(_, key)
 
 end
 
-BGCBus:RegisterEvent("ADDON_LOADED", onAddonLoaded)
+BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
 BGCBus:RegisterEvent("PLAYER_LOGOUT", onPlayerLogout)
 BGCBus:RegisterEvent("PLAYER_ENTERING_WORLD", onPlayerEnteringWorld)
 BGCBus:RegisterEvent("PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
