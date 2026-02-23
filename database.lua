@@ -2,8 +2,9 @@ local name, ns = ...
 
 ns.db = ns.db or {}
 
-local LibSharedVariables = LibStub("LibSavedVariables-1.0")
-if not LibSharedVariables then error(name .. " requires LibSavedVariables-1.0") end
+local next = next
+local rawget = rawget
+local setmetatable = setmetatable
 
 local defaults = {
     x = GetScreenWidth() / 2,
@@ -29,19 +30,82 @@ local defaultsPC = {
 
     temporal = { },
     records = { },
+
+    dailySession = 0,
     allTimeRecord = 0,
 }
 
-local function onLoadCallback(database, _, _)
-    ns.db = database
+local db, dbpc = { }, { }
+
+local function loadSavedVariableTables()
+    _G[name.."DB"] = _G[name.."DB"] or {}
+    _G[name.."PCDB"] = _G[name.."PCDB"] or {}
+
+    db = _G[name.."DB"]
+    dbpc = _G[name.."PCDB"]
+end
+
+local function applyDefaultValues()
+    setmetatable(db, { __index = defaults })
+    setmetatable(dbpc, { __index = defaultsPC })
+end
+
+local function createCombinedDatabase()
+    setmetatable(ns.db, {
+        __index = function(_, key)
+            local value = dbpc[key]
+            if value ~= nil then
+                return value
+            end
+
+            return db[key]
+        end,
+        __newindex = function(_, key, value)
+            if rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil then
+                dbpc[key] = value
+                return
+            end
+
+            if rawget(db, key) ~= nil or defaults[key] ~= nil then
+                db[key] = value
+                return
+            end
+
+            dbpc[key] = value
+        end,
+        __pairs = function()
+            local seen = {}
+            local globalKey, perCharacterKey
+
+            return function()
+                local value
+
+                perCharacterKey, value = next(dbpc, perCharacterKey)
+                if perCharacterKey ~= nil then
+                    seen[perCharacterKey] = true
+                    return perCharacterKey, value
+                end
+
+                repeat
+                    globalKey, value = next(db, globalKey)
+                until globalKey == nil or not seen[globalKey]
+
+                if globalKey ~= nil then
+                    return globalKey, value
+                end
+            end
+        end,
+    })
+end
+
+local function onVariablesLoaded()
+
+    loadSavedVariableTables()
+    applyDefaultValues()
+
+    createCombinedDatabase()
+
     BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
 end
 
-local options = {
-    name = name,
-    defaults = defaults,
-    defaultsPC = defaultsPC,
-    onLoadCallback = onLoadCallback,
-}
-
-LibSharedVariables:Load(options)
+BGCBus:RegisterEvent("VARIABLES_LOADED", onVariablesLoaded)

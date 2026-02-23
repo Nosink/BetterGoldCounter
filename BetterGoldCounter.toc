@@ -1,7 +1,7 @@
 
 ## Title: BetterGoldCounter
 
-## Interface: 20505, 11508
+## Interface: 20505
 
 ## Notes-enUS: Track and display your gold with session earnings and per-character totals.
 ## Notes-esES: Realiza un seguimiento y muestra tu oro con ganancias por sesión y totales por personaje.
@@ -14,11 +14,10 @@
 # Libraries
 libs/LibStub/LibStub.lua
 libs/LibEventBus-1.0/LibEventBus-1.0.lua
-libs/LibSavedVariables-1.0/LibSavedVariables-1.0.lua
 
 # Addon - Core
-database.lua
 addon.lua
+database.lua
 utils.lua
 
 # Module: Localization

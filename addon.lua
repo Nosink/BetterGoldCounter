@@ -1,7 +1,7 @@
 local name, ns = ...
 
 local LibEventBus = LibStub("LibEventBus-1.0")
-BGCBus = LibEventBus:NewBus("BGCBus", true, false)
+BGCBus = LibEventBus:NewBus("BGCBus", true)
 
 local dailyResetAction = nil
 
