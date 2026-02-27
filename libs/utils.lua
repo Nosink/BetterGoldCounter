@@ -1,16 +1,16 @@
 
 local _, ns = ...
 
-ns.utils = ns.utils or {}
+local utils = {}
 
-function ns.utils.GetSignSymbol(amount)
+function utils.GetSignSymbol(amount)
     if type(amount) ~= "number" then
         return ""
     end
     return amount < 0 and "-" or amount > 0 and "+" or ""
 end
 
-function ns.utils.FadeIn(frame, duration, targetAlpha)
+function utils.FadeIn(frame, duration, targetAlpha)
     local fadeInfo = {
         mode = "IN",
         timeToFade = duration,
@@ -19,7 +19,7 @@ function ns.utils.FadeIn(frame, duration, targetAlpha)
     UIFrameFade(frame, fadeInfo)
 end
 
-function ns.utils.FadeOut(frame, duration, targetAlpha)
+function utils.FadeOut(frame, duration, targetAlpha)
     local fadeInfo = {
         mode = "OUT",
         timeToFade = duration,
@@ -27,3 +27,5 @@ function ns.utils.FadeOut(frame, duration, targetAlpha)
         endAlpha = targetAlpha }
     UIFrameFade(frame, fadeInfo)
 end
+
+ns.utils = utils

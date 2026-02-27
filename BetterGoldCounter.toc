@@ -15,10 +15,12 @@
 libs/LibStub/LibStub.lua
 libs/LibEventBus-1.0/LibEventBus-1.0.lua
 
+libs/debug.lua
+libs/utils.lua
+
 # Addon - Core
 addon.lua
 database.lua
-utils.lua
 
 # Module: Localization
 localization/localization.lua
@@ -43,6 +45,9 @@ configuration/settings.lua
 model/player.lua
 view/frame.lua
 controller/player.lua
+
+# Daily Reset
+controller/reset.lua
 
 # Chat
 view/chat.lua
