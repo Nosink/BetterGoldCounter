@@ -41,7 +41,7 @@ local function getSession()
     elseif frequency == "DAILY" then
         session = ns.db.dailySession or 0
     elseif frequency == "NEVER" then
-        session = ns.db.allTimeRecord or 0
+        session = ns.db.allTimeSession or 0
     else
         session = 0
     end
@@ -66,7 +66,7 @@ local function updateSessions(amount)
     session = session + amount
     ns.db.session = ns.db.session + amount
     ns.db.dailySession = ns.db.dailySession + amount
-    ns.db.allTimeRecord = ns.db.allTimeRecord + amount
+    ns.db.allTimeSession = ns.db.allTimeSession + amount
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
@@ -86,7 +86,7 @@ local function clearSessions()
     session = 0
     ns.db.session = 0
     ns.db.dailySession = 0
-    ns.db.allTimeRecord = 0
+    ns.db.allTimeSession = 0
 end
 
 local function onClearSessionRequested(_)

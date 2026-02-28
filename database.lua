@@ -41,7 +41,7 @@ local defaultsPC = {
     -- Session tracking
     session = 0,
     dailySession = 0,
-    allTimeRecord = 0,
+    allTimeSession = 0,
 }
 
 local db, dbpc = { }, { }
@@ -84,32 +84,31 @@ local function createCombinedDatabase()
             end
         end,
         __pairs = function()
-            local seen = { }
-            local dbpcKey, dbKey
-            local dbpcDone = false
+            local seen = {}
+            local pc_key = nil
+            local db_key = nil
+            local pc_done = false
 
-            local function iter()
+            return function()
                 local value
 
-                if not dbpcDone then
-                    dbpcKey, value = next(dbpc, dbpcKey)
-                    if dbpcKey ~= nil then
-                        seen[dbpcKey] = true
-                        return dbpcKey, value
+                if not pc_done then
+                    pc_key, value = next(dbpc, pc_key)
+                    if pc_key ~= nil then
+                        seen[pc_key] = true
+                        return pc_key, value
                     end
-                    dbpcDone = true
+                    pc_done = true
                 end
 
                 repeat
-                    dbKey, value = next(db, dbKey)
-                until dbKey == nil or not seen[dbKey]
+                    db_key, value = next(db, db_key)
+                until db_key == nil or not seen[db_key]
 
-                if dbKey ~= nil then
-                    return dbKey, value
+                if db_key ~= nil then
+                    return db_key, value
                 end
-            end
-
-            return iter, nil, nil
+            end, nil, nil
         end,
     })
 
