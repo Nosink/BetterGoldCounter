@@ -186,9 +186,11 @@ local function SetText(amount)
     frame:UpdateFrameAndText(amount)
 end
 
-local function onPlayerModalReady(_)
+local function onPlayerModalReady(_, sessionMoney)
     createFrame()
     CreateLabel()
+
+    SetText(sessionMoney)
 end
 
 local function onSessionMoneyChanged(_, sessionMoney)

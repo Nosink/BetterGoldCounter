@@ -1,7 +1,6 @@
 local name, ns = ...
 
 local settings = ns.settings
-local database = ns.db or { }
 
 local money = 0
 local session = 0
@@ -15,34 +14,34 @@ local function getUnitName()
 end
 
 local function setDailyRecord(dateKey)
-    database.records = database.records or { }
-    database.records[ns.unitName] = database.records[ns.unitName] or { }
-    database.records[ns.unitName][dateKey] = database.dailySession or 0
-    database.dailySession = 0
+    ns.db.records = ns.db.records or { }
+    ns.db.records[ns.unitName] = ns.db.records[ns.unitName] or { }
+    ns.db.records[ns.unitName][dateKey] = ns.db.dailySession or 0
+    ns.db.dailySession = 0
 end
 
 local function evaluateLastLogin()
-    local lastLogin = database.lastLogin
+    local lastLogin = ns.db.lastLogin
     if not lastLogin or lastLogin == loginDate then return end
 
     setDailyRecord(lastLogin)
-    database.lastLogin = loginDate
+    ns.db.lastLogin = loginDate
 end
 
 local function evaluateInitialLogin()
     if not isInitialLogin then return end
 
-    database.session = 0
+    ns.db.session = 0
 end
 
 local function getSession()
     local frequency = settings.GetCleanFrequency()
     if frequency == "SESSION" then
-        session = database.session or 0
+        session = ns.db.session or 0
     elseif frequency == "DAILY" then
-        session = database.dailySession or 0
+        session = ns.db.dailySession or 0
     elseif frequency == "NEVER" then
-        session = database.allTimeRecord or 0
+        session = ns.db.allTimeRecord or 0
     else
         session = 0
     end
@@ -59,19 +58,19 @@ local function onVariablesLoaded(_)
     getSession()
     updateMoney()
 
-    BGCBus:TriggerEvent(name .. "_PLAYER_MODAL_READY")
-    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
+    BGCBus:TriggerEvent(name .. "_PLAYER_MODAL_READY", session)
 end
 
 local function updateSessions(amount)
-    database.session = database.session + amount
-    database.dailySession = database.dailySession + amount
-    database.allTimeRecord = database.allTimeRecord + amount
+    amount = amount or 0
+    session = session + amount
+    ns.db.session = ns.db.session + amount
+    ns.db.dailySession = ns.db.dailySession + amount
+    ns.db.allTimeRecord = ns.db.allTimeRecord + amount
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
     local difference = newAmount - money
-    session = session + difference
 
     updateMoney()
     updateSessions(difference)
@@ -85,9 +84,9 @@ end
 
 local function clearSessions()
     session = 0
-    database.session = 0
-    database.dailySession = 0
-    database.allTimeRecord = 0
+    ns.db.session = 0
+    ns.db.dailySession = 0
+    ns.db.allTimeRecord = 0
 end
 
 local function onClearSessionRequested(_)
@@ -98,8 +97,8 @@ local function onClearSessionRequested(_)
 end
 
 local function clearRecords()
-    database.records = database.records or { }
-    database.records[ns.unitName] = { }
+    ns.db.records = ns.db.records or { }
+    ns.db.records[ns.unitName] = { }
 end
 
 local function onWipeRequested(_)
@@ -111,7 +110,7 @@ end
 
 local function updateDates()
     loginDate = tostring(date("%Y-%m-%d"))
-    database.lastLogin = loginDate
+    ns.db.lastLogin = loginDate
 end
 
 local function onDailyReset(_)
