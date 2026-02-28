@@ -1,5 +1,6 @@
 local name, ns = ...
 
+local debug = ns.debug
 local settings = ns.settings
 
 local money = 0
@@ -52,6 +53,7 @@ local function onVariablesLoaded(_)
     updateLocalSession()
     updateMoney()
 
+    BGCBus:TriggerEvent(name .. "_PLAYER_MODAL_READY")
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
 
@@ -62,26 +64,16 @@ local function updateDatabaseSessions(amount)
 end
 
 local function onPlayerMoneyChanged(_, newAmount)
-    session = newAmount - money
+    local difference = newAmount - money
+    session = session + difference
 
     updateMoney()
-    updateDatabaseSessions(session)
-
-    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
-end
-
-local function onReloadingUI(_)
-    updateLocalSession()
-    updateMoney()
+    updateDatabaseSessions(difference)
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
 
 local function onPlayerLogout(_)
-    ns.db.session = 0
-end
-
-local function onPlayerLeavingWorld(_)
     ns.db.session = 0
 end
 
@@ -100,6 +92,8 @@ local function onClearSessionRequested(_)
 end
 
 local function onWipeRequested(_)
+    session = 0
+
     ns.db.session = 0
     ns.db.dailySession = 0
     ns.db.allTimeRecord = 0
@@ -126,9 +120,7 @@ BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
 
 BGCBus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
 
-BGCBus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
 BGCBus:RegisterEvent(name .. "_PLAYER_LOGOUT", onPlayerLogout)
-BGCBus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
 
 BGCBus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
 BGCBus:RegisterEvent(name .. "_WIPE_REQUESTED", onWipeRequested)

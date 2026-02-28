@@ -59,60 +59,48 @@ local function applyDefaultValues()
     setmetatable(dbpc, { __index = defaultsPC })
 end
 
-local function combinedPairs()
-    local seen = { }
-    local dbpcKey, dbKey
-    local dbpcDone = false
-
-    local function iter()
-        local value
-
-        if not dbpcDone then
-            dbpcKey, value = next(dbpc, dbpcKey)
-            if dbpcKey ~= nil then
-                seen[dbpcKey] = true
-                return dbpcKey, value
-            end
-            dbpcDone = true
-        end
-
-        repeat
-            dbKey, value = next(db, dbKey)
-        until dbKey == nil or not seen[dbKey]
-
-        if dbKey ~= nil then
-            return dbKey, value
-        end
-    end
-
-    return iter, nil, nil
-end
-
 local function createCombinedDatabase()
     local database = {}
     setmetatable(database, {
         __index = function(_, key)
             local value = dbpc[key]
-            if value ~= nil then
-                return value
-            end
-
-            return db[key]
+            return value ~= nil and value or db[key]
         end,
         __newindex = function(_, key, value)
-            if rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil then
-                dbpc[key] = value
-                return
-            end
-
             if rawget(db, key) ~= nil or defaults[key] ~= nil then
                 db[key] = value
-                return
+            else
+                dbpc[key] = value
+            end
+        end,
+        __pairs = function()
+            local seen = { }
+            local dbpcKey, dbKey
+            local dbpcDone = false
+
+            local function iter()
+                local value
+
+                if not dbpcDone then
+                    dbpcKey, value = next(dbpc, dbpcKey)
+                    if dbpcKey ~= nil then
+                        seen[dbpcKey] = true
+                        return dbpcKey, value
+                    end
+                    dbpcDone = true
+                end
+
+                repeat
+                    dbKey, value = next(db, dbKey)
+                until dbKey == nil or not seen[dbKey]
+
+                if dbKey ~= nil then
+                    return dbKey, value
+                end
             end
 
-            dbpc[key] = value
+            return iter, nil, nil
         end,
-        __pairs = combinedPairs,
     })
 
     ns.db = database

@@ -84,6 +84,7 @@ local function SetAlpha(frame)
 end
 
 local function CreateLabel(frame)
+    if frame.label then return end
 
     local label = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
     label:SetShadowOffset(1, -1)
@@ -95,6 +96,8 @@ local function CreateLabel(frame)
 end
 
 local function getMoneyString(amount)
+    if type(amount) ~= "number" then return "" end
+
     local sign = utils.GetSignSymbol(tonumber(amount))
     local moneyString = GetMoneyString(math.abs(amount))
     return (sign .. " " .. moneyString)
@@ -153,6 +156,7 @@ local function SetText(amount)
 end
 
 local function createFrame()
+    if frame then return end
 
     frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
 
@@ -168,12 +172,8 @@ local function createFrame()
     frame:Show()
 end
 
-local function onVariablesLoaded(_)
+local function onPlayerModalReady(_)
     createFrame()
-    BGCBus:TriggerEvent(name .. "_FRAME_CREATED")
-end
-
-local function onFrameCreated(_)
     SetText(ns.session)
 end
 
@@ -197,7 +197,6 @@ local function onSettingChanged(_, key)
     end
 end
 
-BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
-BGCBus:RegisterEvent(name .. "_FRAME_CREATED", onFrameCreated)
+BGCBus:RegisterEvent(name .. "_PLAYER_MODAL_READY", onPlayerModalReady)
 BGCBus:RegisterEvent(name .. "_SESSION_MONEY_CHANGED", onSessionMoneyChanged)
 BGCBus:RegisterEvent(name .. "_SETTINGS_CHANGED", onSettingChanged)
