@@ -35,8 +35,8 @@ local defaultsPC = {
     lastLogin = "",
     cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
 
-    -- Stored data
-    records = { },
+    -- Stored data (false sentinel: avoids mutable table aliasing through defaults)
+    records = false,
 
     -- Session tracking
     session = 0,
@@ -54,35 +54,45 @@ local function loadSavedVariableTables()
     dbpc = _G[name.."PCDB"]
 end
 
-local function applyDefaultValues()
-    setmetatable(db, { __index = defaults })
-    setmetatable(dbpc, { __index = defaultsPC })
-end
-
-local function owns_dbpc(key) 
-    return rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil
-end
-
-local function owns_db(key)
-    return rawget(db, key) ~= nil or defaults[key] ~= nil
-end
-
 local function createCombinedDatabase()
     local proxy = {}
     setmetatable(proxy, {
         __index = function(_, key)
-            local value = dbpc[key]
-            return value ~= nil and value or db[key]
+            -- Check per-character table first
+            local value = rawget(dbpc, key)
+            if value ~= nil then
+                return value
+            end
+            
+            -- Check account table
+            value = rawget(db, key)
+            if value ~= nil then
+                return value
+            end
+            
+            -- Apply per-character default if available
+            if defaultsPC[key] ~= nil then
+                return defaultsPC[key]
+            end
+            
+            -- Apply account default if available
+            return defaults[key]
         end,
         __newindex = function(_, key, value)
-            if owns_dbpc(key) then
+            -- Check if per-character table owns this key (stored or in defaults)
+            if rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil then
                 dbpc[key] = value
-            elseif owns_db(key) then
+            -- Check if account table owns this key (stored or in defaults)
+            elseif rawget(db, key) ~= nil or defaults[key] ~= nil then
                 db[key] = value
+            -- Default to per-character for new keys
             else
                 dbpc[key] = value
             end
         end,
+        -- NOTE: __pairs is a Lua 5.2+ metamethod.
+        -- In Lua 5.1, pairs(ns.db) iterates the empty proxy and yields nothing.
+        -- Use ns.debug.pairs(ns.db) or getmetatable(ns.db).__pairs() instead.
         __pairs = function()
             local seen = {}
             local pc_key = nil
@@ -118,8 +128,6 @@ end
 local function onVariablesLoaded()
 
     loadSavedVariableTables()
-    applyDefaultValues()
-
     createCombinedDatabase()
 
     BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
