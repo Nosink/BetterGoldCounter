@@ -59,15 +59,25 @@ local function applyDefaultValues()
     setmetatable(dbpc, { __index = defaultsPC })
 end
 
+local function owns_dbpc(key) 
+    return rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil
+end
+
+local function owns_db(key)
+    return rawget(db, key) ~= nil or defaults[key] ~= nil
+end
+
 local function createCombinedDatabase()
-    local database = {}
-    setmetatable(database, {
+    local proxy = {}
+    setmetatable(proxy, {
         __index = function(_, key)
             local value = dbpc[key]
             return value ~= nil and value or db[key]
         end,
         __newindex = function(_, key, value)
-            if rawget(db, key) ~= nil or defaults[key] ~= nil then
+            if owns_dbpc(key) then
+                dbpc[key] = value
+            elseif owns_db(key) then
                 db[key] = value
             else
                 dbpc[key] = value
@@ -103,7 +113,7 @@ local function createCombinedDatabase()
         end,
     })
 
-    ns.db = database
+    ns.db = proxy
 end
 
 local function onVariablesLoaded()

@@ -29,14 +29,16 @@ local function evaluateLastLogin()
     database.lastLogin = loginDate
 end
 
+local function evaluateInitialLogin()
+    if not isInitialLogin then return end
+
+    database.session = 0
+end
+
 local function getSession()
     local frequency = settings.GetCleanFrequency()
     if frequency == "SESSION" then
-        if isInitialLogin then
-            session = 0
-        else
-            session = database.session or 0
-        end
+        session = database.session or 0
     elseif frequency == "DAILY" then
         session = database.dailySession or 0
     elseif frequency == "NEVER" then
@@ -53,10 +55,12 @@ end
 local function onVariablesLoaded(_)
     getUnitName()
     evaluateLastLogin()
+    evaluateInitialLogin()
     getSession()
     updateMoney()
 
     BGCBus:TriggerEvent(name .. "_PLAYER_MODAL_READY")
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
 
 local function updateSessions(amount)

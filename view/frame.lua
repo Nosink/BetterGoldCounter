@@ -189,8 +189,6 @@ end
 local function onPlayerModalReady(_)
     createFrame()
     CreateLabel()
-
-    SetText(ns.session)
 end
 
 local function onSessionMoneyChanged(_, sessionMoney)
