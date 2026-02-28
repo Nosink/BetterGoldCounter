@@ -5,7 +5,9 @@ local settings = ns.settings
 
 local frame = nil
 
-local function SetPosition(frame)
+local function SetPosition()
+    if not frame then return end
+
     frame.SetFramePosition = function(self)
         local x, y = settings.GetPosition()
         frame:ClearAllPoints()
@@ -14,51 +16,15 @@ local function SetPosition(frame)
     frame:SetFramePosition()
 end
 
-local function SetFrameStrata(frame)
+local function SetFrameStrata()
+    if not frame then return end
+
     frame:SetFrameStrata("HIGH")
 end
 
-local function RegisterDrag(frame)
-    local function onUpdate(self)
-        local x, y = self:GetCenter()
-        settings.SetPosition(math.floor(x), math.floor(y))
-    end
+local function SetAlpha()
+    if not frame then return end
 
-    local function onDragStop(self)
-        self:StopMovingOrSizing()
-        self:SetScript("OnUpdate", nil)
-    end
-
-    local function onDragStart(self)
-        if (settings.IsFrameUnlocked()) then
-            self:StartMoving()
-        end
-        self:SetScript("OnDragStop", onDragStop)
-        self:SetScript("OnUpdate", onUpdate)
-    end
-
-    frame:SetMovable(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", onDragStart)
-end
-
-local function SetBackdrop(frame)
-    local backdrop = {
-        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        tile = true, tileSize = 11, edgeSize = 11,
-        insets = { left = 3, right = 3, top = 3, bottom = 3 },
-    }
-    frame.SetBackdropAlpha = function (self)
-        local backdropAlpha = settings.GetBackdropAlpha()
-        self:SetBackdropColor(0, 0, 0, backdropAlpha)
-        self:SetBackdropBorderColor(1.0, 1.0, 1.0, backdropAlpha)
-    end
-    frame:SetBackdrop(backdrop)
-    frame:SetBackdropAlpha()
-end
-
-local function SetAlpha(frame)
     frame.SetFrameAlpha = function(self)
         local alpha = settings.GetFadeOpacity()
         self:SetAlpha(alpha)
@@ -83,21 +49,76 @@ local function SetAlpha(frame)
     frame:SetScript("OnLeave", onLeave)
 end
 
-local function CreateLabel(frame)
-    if frame.label then return end
+local function SetBackdrop()
+    if not frame then return end
+
+    local backdrop = {
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        tile = true, tileSize = 11, edgeSize = 11,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    }
+    frame.SetBackdropAlpha = function (self)
+        local backdropAlpha = settings.GetBackdropAlpha()
+        self:SetBackdropColor(0, 0, 0, backdropAlpha)
+        self:SetBackdropBorderColor(1.0, 1.0, 1.0, backdropAlpha)
+    end
+    frame:SetBackdrop(backdrop)
+    frame:SetBackdropAlpha()
+end
+
+local function RegisterDrag()
+    if not frame then return end
+
+    local function onUpdate(self)
+        local x, y = self:GetCenter()
+        settings.SetPosition(math.floor(x), math.floor(y))
+    end
+
+    local function onDragStop(self)
+        self:StopMovingOrSizing()
+        self:SetScript("OnUpdate", nil)
+    end
+
+    local function onDragStart(self)
+        if (settings.IsFrameUnlocked()) then
+            self:StartMoving()
+        end
+        self:SetScript("OnDragStop", onDragStop)
+        self:SetScript("OnUpdate", onUpdate)
+    end
+
+    frame:SetMovable(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetScript("OnDragStart", onDragStart)
+end
+
+local function createFrame()
+    if frame then return end
+
+    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+
+    SetPosition()
+    SetFrameStrata()
+    SetAlpha()
+    SetBackdrop()
+    RegisterDrag()
+
+    frame:Show()
+end
+
+local function CreateLabelFontString()
+    if not frame then return end
 
     local label = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
     label:SetShadowOffset(1, -1)
     label:SetShadowColor(0, 0, 0, 1)
     label:SetText("")
-    label:Show()
 
     frame.label = label
 end
 
 local function getMoneyString(amount)
-    if type(amount) ~= "number" then return "" end
-
     local sign = utils.GetSignSymbol(tonumber(amount))
     local moneyString = GetMoneyString(math.abs(amount))
     return (sign .. " " .. moneyString)
@@ -116,7 +137,8 @@ local function SetTextColor(label, color)
     label:SetTextColor(color.r, color.g, color.b, 1.0)
 end
 
-local function CreateUpdateTextMethod(frame)
+local function CreateUpdateTextMethod()
+    if not frame then return end
 
     frame.CalculateSize = function(self)
         local height = settings.GetFontSize() * 1.8
@@ -149,31 +171,25 @@ local function CreateUpdateTextMethod(frame)
     end
 end
 
+local function CreateLabel()
+    if not frame or frame.label then return end
+
+    CreateLabelFontString()
+    CreateUpdateTextMethod()
+
+    frame.label:Show()
+end
+
 local function SetText(amount)
     if not frame then return end
 
     frame:UpdateFrameAndText(amount)
 end
 
-local function createFrame()
-    if frame then return end
-
-    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
-
-    SetPosition(frame)
-    SetFrameStrata(frame)
-    SetAlpha(frame)
-    SetBackdrop(frame)
-    RegisterDrag(frame)
-
-    CreateLabel(frame)
-    CreateUpdateTextMethod(frame)
-
-    frame:Show()
-end
-
 local function onPlayerModalReady(_)
     createFrame()
+    CreateLabel()
+
     SetText(ns.session)
 end
 

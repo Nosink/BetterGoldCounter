@@ -1,18 +1,20 @@
 local name, ns = ...
 
 local L = ns.L
-
 local utils = ns.utils
+local database = ns.db or { }
+
+local blueSeparator = function () print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r") end
 
 local function onHistoryRequested()
     local total = 0
     local records = {}
-    if ns.db and ns.unitName and ns.db.records and ns.db.records[ns.unitName] then
-        records = ns.db.records[ns.unitName]
+    if database and ns.unitName and database.records and database.records[ns.unitName] then
+        records = database.records[ns.unitName]
     end
-    print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r")
+    blueSeparator()
     print("|cff3399ff█ " .. name  .. "|r ~ |cffffeb3b" .. L["LKEY_CHAT_G_HISTORY"] .. "|r " .. L["LKEY_CHAT_HISTORY"])
-    print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r")
+    blueSeparator()
     for key, value in pairs(records) do
         local amount = tonumber(value) or 0
         total = total + amount
@@ -24,7 +26,7 @@ local function onHistoryRequested()
             print(string.format("%s: %s %s", tostring(key or ""), utils.GetSignSymbol(amount), GetMoneyString(abs(amount))))
         end
     end
-    print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r")
+    blueSeparator()
     local sign = utils.GetSignSymbol(total)
     if total > 0 then
         print(string.format("%s: |cff99FF99%s %s|r", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(abs(total))))
@@ -33,7 +35,7 @@ local function onHistoryRequested()
     else
         print(string.format("%s: %s %s", L["LKEY_TOTAL_CHAT_HISTORY"], sign, GetMoneyString(abs(total))))
     end
-    print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r")
+    blueSeparator()
 end
 
 BGCBus:RegisterEvent(name .. "_HISTORY_REQUESTED", onHistoryRequested)

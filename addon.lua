@@ -8,9 +8,4 @@ local function onPlayerEnteringWorld(_, isInitialLogin, _)
     BGCBus:TriggerEvent(name .. "_IS_INITIAL_LOGIN")
 end
 
-local function onPlayerLeavingWorld()
-    BGCBus:TriggerEvent(name .. "_PLAYER_LEAVING_WORLD")
-end
-
 BGCBus:RegisterEvent("PLAYER_ENTERING_WORLD", onPlayerEnteringWorld)
-BGCBus:RegisterEvent("PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
