@@ -36,7 +36,7 @@ end
 
 function ns.settings.SetPosition(x, y)
     ns.db.x, ns.db.y = x, y
-     BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
+    BGCBus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
 end
 
 function ns.settings.GetBackdropAlpha()

@@ -22,6 +22,6 @@ SlashCmdList.BETTERGOLDCOUNTER = function(msg)
     elseif msg == "wipe" then
         BGCBus:TriggerEvent(name .. "_WIPE_REQUESTED", ns.session)
     else
-        print("|cffffd200" .. name  .. ":|r Unknown Command:", msg)
+        print("|cffffd200" .. name .. ":|r Unknown Command:", msg)
     end
 end

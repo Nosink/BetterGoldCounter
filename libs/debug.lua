@@ -14,7 +14,7 @@ end
 
 function debug.printPairs(t, indent)
     indent = indent or 1
-    for k,v in debug.pairs(t) do
+    for k, v in debug.pairs(t) do
         if type(v) == "table" then
             print(string.rep("  ", indent) .. k .. ":")
             debug.printPairs(v, indent + 1)

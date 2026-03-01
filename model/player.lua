@@ -14,8 +14,8 @@ local function getUnitName()
 end
 
 local function setDailyRecord(dateKey)
-    ns.db.records = ns.db.records or { }
-    ns.db.records[ns.unitName] = ns.db.records[ns.unitName] or { }
+    ns.db.records = ns.db.records or {}
+    ns.db.records[ns.unitName] = ns.db.records[ns.unitName] or {}
     ns.db.records[ns.unitName][dateKey] = ns.db.dailySession or 0
     ns.db.dailySession = 0
 end
@@ -97,8 +97,8 @@ local function onClearSessionRequested(_)
 end
 
 local function clearRecords()
-    ns.db.records = ns.db.records or { }
-    ns.db.records[ns.unitName] = { }
+    ns.db.records = ns.db.records or {}
+    ns.db.records[ns.unitName] = {}
 end
 
 local function onWipeRequested(_)

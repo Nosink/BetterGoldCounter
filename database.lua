@@ -44,14 +44,14 @@ local defaultsPC = {
     allTimeSession = 0,
 }
 
-local db, dbpc = { }, { }
+local db, dbpc = {}, {}
 
 local function loadSavedVariableTables()
-    _G[name.."DB"] = _G[name.."DB"] or {}
-    _G[name.."PCDB"] = _G[name.."PCDB"] or {}
+    _G[name .. "DB"] = _G[name .. "DB"] or {}
+    _G[name .. "PCDB"] = _G[name .. "PCDB"] or {}
 
-    db = _G[name.."DB"]
-    dbpc = _G[name.."PCDB"]
+    db = _G[name .. "DB"]
+    dbpc = _G[name .. "PCDB"]
 end
 
 local function createCombinedDatabase()
@@ -63,18 +63,18 @@ local function createCombinedDatabase()
             if value ~= nil then
                 return value
             end
-            
+
             -- Check account table
             value = rawget(db, key)
             if value ~= nil then
                 return value
             end
-            
+
             -- Apply per-character default if available
             if defaultsPC[key] ~= nil then
                 return defaultsPC[key]
             end
-            
+
             -- Apply account default if available
             return defaults[key]
         end,
@@ -82,10 +82,10 @@ local function createCombinedDatabase()
             -- Check if per-character table owns this key (stored or in defaults)
             if rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil then
                 dbpc[key] = value
-            -- Check if account table owns this key (stored or in defaults)
+                -- Check if account table owns this key (stored or in defaults)
             elseif rawget(db, key) ~= nil or defaults[key] ~= nil then
                 db[key] = value
-            -- Default to per-character for new keys
+                -- Default to per-character for new keys
             else
                 dbpc[key] = value
             end
@@ -126,7 +126,6 @@ local function createCombinedDatabase()
 end
 
 local function onVariablesLoaded()
-
     loadSavedVariableTables()
     createCombinedDatabase()
 

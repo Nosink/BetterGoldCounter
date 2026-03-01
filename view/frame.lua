@@ -55,10 +55,12 @@ local function SetBackdrop()
     local backdrop = {
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
         edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        tile = true, tileSize = 11, edgeSize = 11,
+        tile = true,
+        tileSize = 11,
+        edgeSize = 11,
         insets = { left = 3, right = 3, top = 3, bottom = 3 },
     }
-    frame.SetBackdropAlpha = function (self)
+    frame.SetBackdropAlpha = function(self)
         local backdropAlpha = settings.GetBackdropAlpha()
         self:SetBackdropColor(0, 0, 0, backdropAlpha)
         self:SetBackdropBorderColor(1.0, 1.0, 1.0, backdropAlpha)

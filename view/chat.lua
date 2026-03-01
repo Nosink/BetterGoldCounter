@@ -3,7 +3,7 @@ local name, ns = ...
 local L = ns.L
 local utils = ns.utils
 
-local blueSeparator = function () print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r") end
+local blueSeparator = function() print("|cff3399ff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|r") end
 
 local function getColor(amount)
     if amount > 0 then
@@ -22,13 +22,14 @@ local function onHistoryRequested()
         records = ns.db.records[ns.unitName]
     end
     blueSeparator()
-    print("|cff3399ff█ " .. name  .. "|r ~ |cffffeb3b" .. L["LKEY_CHAT_G_HISTORY"] .. "|r " .. L["LKEY_CHAT_HISTORY"])
+    print("|cff3399ff█ " .. name .. "|r ~ |cffffeb3b" .. L["LKEY_CHAT_G_HISTORY"] .. "|r " .. L["LKEY_CHAT_HISTORY"])
     blueSeparator()
 
     for key, value in pairs(records) do
         local amount = tonumber(value) or 0
         total = total + amount
-        print(string.format("%s: %s%s %s|r", tostring(key or ""), getColor(amount), utils.GetSignSymbol(amount), GetMoneyString(abs(amount))))
+        print(string.format("%s: %s%s %s|r", tostring(key or ""), getColor(amount), utils.GetSignSymbol(amount),
+            GetMoneyString(abs(amount))))
     end
 
     blueSeparator()
