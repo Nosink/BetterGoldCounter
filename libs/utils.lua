@@ -1,4 +1,3 @@
-
 local _, ns = ...
 
 local utils = {}
@@ -15,7 +14,8 @@ function utils.FadeIn(frame, duration, targetAlpha)
         mode = "IN",
         timeToFade = duration,
         startAlpha = frame:GetAlpha(),
-        endAlpha = targetAlpha }
+        endAlpha = targetAlpha
+    }
     UIFrameFade(frame, fadeInfo)
 end
 
@@ -24,7 +24,8 @@ function utils.FadeOut(frame, duration, targetAlpha)
         mode = "OUT",
         timeToFade = duration,
         startAlpha = frame:GetAlpha(),
-        endAlpha = targetAlpha }
+        endAlpha = targetAlpha
+    }
     UIFrameFade(frame, fadeInfo)
 end
 

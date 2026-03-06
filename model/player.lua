@@ -4,7 +4,6 @@ local settings = ns.settings
 
 local money = 0
 local session = 0
-local isInitialLogin = false
 local loginDate = tostring(date("%Y-%m-%d"))
 
 local function getUnitName()
@@ -13,11 +12,15 @@ local function getUnitName()
     ns.unitName = UnitName("player")
 end
 
+local function clearDailySession()
+    ns.db.dailySession = 0
+end
+
 local function setDailyRecord(dateKey)
     ns.db.records = ns.db.records or {}
     ns.db.records[ns.unitName] = ns.db.records[ns.unitName] or {}
     ns.db.records[ns.unitName][dateKey] = ns.db.dailySession or 0
-    ns.db.dailySession = 0
+    clearDailySession()
 end
 
 local function evaluateLastLogin()
@@ -27,13 +30,6 @@ local function evaluateLastLogin()
     setDailyRecord(lastLogin)
     ns.db.lastLogin = loginDate
 end
-
-local function evaluateInitialLogin()
-    if not isInitialLogin then return end
-
-    ns.db.session = 0
-end
-
 local function getSession()
     local frequency = settings.GetCleanFrequency()
     if frequency == "SESSION" then
@@ -51,12 +47,16 @@ local function updateMoney()
     money = GetMoney()
 end
 
+local function updateMoneyDelayed(seconds)
+    C_Timer.After(seconds, updateMoney)
+end
+
 local function onVariablesLoaded(_)
     getUnitName()
     evaluateLastLogin()
-    evaluateInitialLogin()
-    getSession()
-    updateMoney()
+
+    updateMoneyDelayed(0.1)
+    updateMoneyDelayed(1.0)
 
     BGCBus:TriggerEvent(name .. "_PLAYER_MODAL_READY", session)
 end
@@ -78,20 +78,37 @@ local function onPlayerMoneyChanged(_, newAmount)
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
 
-local function onInitialLogin(_)
-    isInitialLogin = true
-end
-
-local function clearSessions()
+local function clearSession()
     session = 0
     ns.db.session = 0
-    ns.db.dailySession = 0
+end
+
+local function onInitialLogin(_)
+    clearSession()
+end
+
+local function onReloadingUI(_)
+    getSession()
+    BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
+end
+
+local function onPlayerLeavingWorld(_)
+    setDailyRecord(loginDate)
+end
+
+local function clearAllTimeSession()
     ns.db.allTimeSession = 0
+end
+
+local function clearAllSessions()
+    clearSession()
+    clearDailySession()
+    clearAllTimeSession()
 end
 
 local function onClearSessionRequested(_)
     setDailyRecord(loginDate)
-    clearSessions()
+    clearAllSessions()
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
@@ -102,7 +119,7 @@ local function clearRecords()
 end
 
 local function onWipeRequested(_)
-    clearSessions()
+    clearAllSessions()
     clearRecords()
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
@@ -123,6 +140,8 @@ end
 BGCBus:RegisterEvent(name .. "_VARIABLES_LOADED", onVariablesLoaded)
 BGCBus:RegisterEvent(name .. "_PLAYER_MONEY_CHANGED", onPlayerMoneyChanged)
 BGCBus:RegisterEvent(name .. "_IS_INITIAL_LOGIN", onInitialLogin)
+BGCBus:RegisterEvent(name .. "_IS_RELOADING_UI", onReloadingUI)
+BGCBus:RegisterEvent(name .. "_PLAYER_LEAVING_WORLD", onPlayerLeavingWorld)
 BGCBus:RegisterEvent(name .. "_CLEAR_SESSION_REQUESTED", onClearSessionRequested)
 BGCBus:RegisterEvent(name .. "_WIPE_REQUESTED", onWipeRequested)
 BGCBus:RegisterEvent(name .. "_DAILY_RESET", onDailyReset)

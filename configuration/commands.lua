@@ -18,7 +18,6 @@ SlashCmdList.BETTERGOLDCOUNTER = function(msg)
         BGCBus:TriggerEvent(name .. "_CLEAR_SESSION_REQUESTED")
     elseif msg == "history" then
         BGCBus:TriggerEvent(name .. "_HISTORY_REQUESTED")
-        ns.debug.printPairs(ns.db)
     elseif msg == "wipe" then
         BGCBus:TriggerEvent(name .. "_WIPE_REQUESTED", ns.session)
     else
