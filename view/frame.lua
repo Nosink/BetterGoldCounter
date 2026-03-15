@@ -4,6 +4,7 @@ local utils = ns.utils
 local settings = ns.settings
 
 local frame = nil
+local default = 0
 
 local function SetPosition()
     if not frame then return end
@@ -188,11 +189,11 @@ local function SetText(amount)
     frame:UpdateFrameAndText(amount)
 end
 
-local function onPlayerModalReady(_, sessionMoney)
+local function onPlayerModalReady(_)
     createFrame()
     CreateLabel()
 
-    SetText(sessionMoney)
+    SetText(default)
 end
 
 local function onSessionMoneyChanged(_, sessionMoney)
