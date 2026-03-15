@@ -18,8 +18,9 @@ end
 local function onHistoryRequested()
     local total = 0
     local records = {}
-    if ns.db and ns.unitName and ns.db.records and ns.db.records[ns.unitName] then
-        records = ns.db.records[ns.unitName]
+    local unitName = utils.GetUnitName()
+    if ns.db and unitName and ns.db.records and ns.db.records[unitName] then
+        records = ns.db.records[unitName]
     end
     blueSeparator()
     print("|cff3399ff█ " .. name .. "|r ~ |cffffeb3b" .. L["LKEY_CHAT_G_HISTORY"] .. "|r " .. L["LKEY_CHAT_HISTORY"])

@@ -2,6 +2,10 @@ local _, ns = ...
 
 local utils = {}
 
+function utils.GetUnitName()
+    return UnitName("player")
+end
+
 function utils.GetSignSymbol(amount)
     if type(amount) ~= "number" then
         return ""
