@@ -119,7 +119,7 @@ end
 
 local function onClearSessionRequested(_)
     setDailyRecord(loginDate)
-    clearAllSessions()
+    clearSession()
 
     BGCBus:TriggerEvent(name .. "_SESSION_MONEY_CHANGED", session)
 end
