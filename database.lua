@@ -44,55 +44,42 @@ local defaultsPC = {
     allTimeSession = 0,
 }
 
-local db, dbpc = {}, {}
+local db, dbPc = {}, {}
 
 local function loadSavedVariableTables()
     _G[name .. "DB"] = _G[name .. "DB"] or {}
     _G[name .. "PCDB"] = _G[name .. "PCDB"] or {}
 
     db = _G[name .. "DB"]
-    dbpc = _G[name .. "PCDB"]
+    dbPc = _G[name .. "PCDB"]
 end
 
 local function createCombinedDatabase()
     local proxy = {}
+
     setmetatable(proxy, {
         __index = function(_, key)
-            -- Check per-character table first
-            local value = rawget(dbpc, key)
-            if value ~= nil then
-                return value
-            end
+            local rawPcDb = rawget(dbPc, key)
+            if rawPcDb ~= nil then return rawPcDb end
 
-            -- Check account table
-            value = rawget(db, key)
-            if value ~= nil then
-                return value
-            end
+            local rawDb = rawget(db, key)
+            if rawDb ~= nil then return rawDb end
 
-            -- Apply per-character default if available
-            if defaultsPC[key] ~= nil then
-                return defaultsPC[key]
-            end
+            local rawDefault = defaultsPC[key]
+            if rawDefault ~= nil then return rawDefault end
 
-            -- Apply account default if available
             return defaults[key]
         end,
         __newindex = function(_, key, value)
-            -- Check if per-character table owns this key (stored or in defaults)
-            if rawget(dbpc, key) ~= nil or defaultsPC[key] ~= nil then
-                dbpc[key] = value
-                -- Check if account table owns this key (stored or in defaults)
-            elseif rawget(db, key) ~= nil or defaults[key] ~= nil then
-                db[key] = value
-                -- Default to per-character for new keys
+            local inPcDb = rawget(dbPc, key) ~= nil or defaultsPC[key] ~= nil
+            local notInDb = not (rawget(db, key) ~= nil or defaults[key] ~= nil)
+
+            if inPcDb or notInDb then
+                dbPc[key] = value
             else
-                dbpc[key] = value
+                db[key] = value
             end
         end,
-        -- NOTE: __pairs is a Lua 5.2+ metamethod.
-        -- In Lua 5.1, pairs(ns.db) iterates the empty proxy and yields nothing.
-        -- Use ns.debug.pairs(ns.db) or getmetatable(ns.db).__pairs() instead.
         __pairs = function()
             local seen = {}
             local pc_key = nil
@@ -103,7 +90,7 @@ local function createCombinedDatabase()
                 local value
 
                 if not pc_done then
-                    pc_key, value = next(dbpc, pc_key)
+                    pc_key, value = next(dbPc, pc_key)
                     if pc_key ~= nil then
                         seen[pc_key] = true
                         return pc_key, value
