@@ -14,6 +14,7 @@
 # Libraries
 libs/LibStub/LibStub.lua
 libs/LibEventBus-1.0/LibEventBus-1.0.lua
+libs/LibSharedVariables-1.0/LibSharedVariables-1.0.lua
 
 libs/debug.lua
 libs/utils.lua

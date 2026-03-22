@@ -1,10 +1,9 @@
 local name, ns = ...
 
 ns.db = ns.db or {}
+ns.dbHandle = ns.dbHandle or nil
 
-local next = next
-local rawget = rawget
-local setmetatable = setmetatable
+local LibSharedVariables = LibStub("LibSharedVariables-1.0")
 
 local defaults = {
     -- Position
@@ -44,77 +43,9 @@ local defaultsPC = {
     allTimeSession = 0,
 }
 
-local db, dbPc = {}, {}
-
-local function loadSavedVariableTables()
-    _G[name .. "DB"] = _G[name .. "DB"] or {}
-    _G[name .. "PCDB"] = _G[name .. "PCDB"] or {}
-
-    db = _G[name .. "DB"]
-    dbPc = _G[name .. "PCDB"]
-end
-
-local function createCombinedDatabase()
-    local proxy = {}
-
-    setmetatable(proxy, {
-        __index = function(_, key)
-            local rawPcDb = rawget(dbPc, key)
-            if rawPcDb ~= nil then return rawPcDb end
-
-            local rawDb = rawget(db, key)
-            if rawDb ~= nil then return rawDb end
-
-            local rawDefault = defaultsPC[key]
-            if rawDefault ~= nil then return rawDefault end
-
-            return defaults[key]
-        end,
-        __newindex = function(_, key, value)
-            local inPcDb = rawget(dbPc, key) ~= nil or defaultsPC[key] ~= nil
-            local notInDb = not (rawget(db, key) ~= nil or defaults[key] ~= nil)
-
-            if inPcDb or notInDb then
-                dbPc[key] = value
-            else
-                db[key] = value
-            end
-        end,
-        __pairs = function()
-            local seen = {}
-            local pc_key = nil
-            local db_key = nil
-            local pc_done = false
-
-            return function()
-                local value
-
-                if not pc_done then
-                    pc_key, value = next(dbPc, pc_key)
-                    if pc_key ~= nil then
-                        seen[pc_key] = true
-                        return pc_key, value
-                    end
-                    pc_done = true
-                end
-
-                repeat
-                    db_key, value = next(db, db_key)
-                until db_key == nil or not seen[db_key]
-
-                if db_key ~= nil then
-                    return db_key, value
-                end
-            end, nil, nil
-        end,
-    })
-
-    ns.db = proxy
-end
-
 local function onVariablesLoaded()
-    loadSavedVariableTables()
-    createCombinedDatabase()
+    local handle = LibSharedVariables:New(name, defaults, defaultsPC)
+    ns.db = handle.db
 
     BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
 end

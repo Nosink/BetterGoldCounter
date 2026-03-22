@@ -36,4 +36,8 @@ function utils.FadeOut(frame, duration, targetAlpha)
     UIFrameFade(frame, fadeInfo)
 end
 
+function utils.ColoredText(color, text)
+    return string.format("|c%s%s|r", color, text)
+end
+
 ns.utils = utils
