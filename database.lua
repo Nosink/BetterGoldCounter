@@ -43,11 +43,13 @@ local defaultsPC = {
     allTimeSession = 0,
 }
 
-local function onVariablesLoaded()
-    local handle = LibSharedVariables:New(name, defaults, defaultsPC)
-    ns.db = handle.db
-
+local function handleOnLoadDatabase(db)
+    ns.db = db
     BGCBus:TriggerEvent(name .. "_VARIABLES_LOADED")
+end
+
+local function onVariablesLoaded()
+    LibSharedVariables:Load(name, defaults, defaultsPC, handleOnLoadDatabase)
 end
 
 BGCBus:RegisterEvent("VARIABLES_LOADED", onVariablesLoaded)

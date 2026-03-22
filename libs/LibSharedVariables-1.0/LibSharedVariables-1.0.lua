@@ -13,15 +13,6 @@ local rawget = rawget
 local setmetatable = setmetatable
 local type = type
 
-local function ensureTable(table)
-    local t = rawget(_G, table)
-    if type(t) == "table" then return t end
-
-    t = {}
-    _G[table] = t
-    return t
-end
-
 local proto = {}
 
 function proto:__index(key)
@@ -137,8 +128,8 @@ end
 local proxy = {}
 proxy.__index = proxy
 
-function proxy:Get(key)
-    return self.db[key]
+function proxy:Get(key, default)
+    return self.db[key] or default
 end
 
 function proxy:Set(key, value)
@@ -146,15 +137,33 @@ function proxy:Set(key, value)
     return value
 end
 
+local function validateName(name)
+    if type(name) == "string" and name ~= "" then return end
+    error(major .. ": invalid \"name\" argument: expected non-empty string, got " .. type(name))
+end
+
+local function validateOnLoad(onLoad)
+    if onLoad ~= nil and type(onLoad) == "function" then return end
+    error(major .. ": invalid \"onLoad\" argument: expected function, got " .. type(onLoad))
+end
+
+local function ensureDB(table)
+    local t = rawget(_G, table)
+    if type(t) == "table" then return t end
+
+    t = {}
+    _G[table] = t
+    return t
+end
+
 lib.handles = lib.handles or {}
 
-function lib:New(name, defaults, defaultsPC)
-    if type(name) ~= "string" or name == "" then
-        error(major .. ":New(name, defaults, defaultsPC) requires a non-empty string name")
-    end
+function lib:Load(name, defaults, defaultsPC, onLoad)
+    validateName(name)
+    validateOnLoad(onLoad)
 
-    local accountDB = ensureTable(name .. "DB")
-    local charDB = ensureTable(name .. "PCDB")
+    local charDB = ensureDB(name .. "PCDB")
+    local accountDB = ensureDB(name .. "DB")
 
     local handle = self.handles[name]
     if handle then
@@ -176,7 +185,6 @@ function lib:New(name, defaults, defaultsPC)
         if defaultsPC ~= nil then
             state.defaultsPC = defaultsPC
         end
-
         return handle
     end
 
@@ -201,5 +209,10 @@ function lib:New(name, defaults, defaultsPC)
     }, proto)
 
     self.handles[name] = handle
+
+    if onLoad then
+        onLoad(handle.db, handle)
+    end
+
     return handle
 end
