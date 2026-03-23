@@ -1,13 +1,9 @@
-local name, ns = ...
+local name, _ = ...
 
-local utils = ns.utils
+local function onPlayerMoney()
+    local money = GetMoney()
 
-local function updateGoldCounterFrame()
-    local sign = utils.GetSignSymbol(ns.session)
-    local moneyString = GetMoneyString(math.abs(ns.session))
-    local text = string.format("%s %s", sign, moneyString)
-    ns.frame:UpdateText(text)
+    BGCBus:TriggerEvent(name .. "_PLAYER_MONEY_CHANGED", money)
 end
 
-ns:RegisterEvent(name .. "_PLAYER_MONEY_READY", updateGoldCounterFrame)
-ns:RegisterEvent(name .. "_PLAYER_MONEY_CACHED", updateGoldCounterFrame)
+BGCBus:RegisterEvent("PLAYER_MONEY", onPlayerMoney)

@@ -1,0 +1,16 @@
+## Interface: 11508, 20505
+## LoadOnDemand: 1
+
+## Title: LibSharedVariables-1.0
+## Notes: Shared account and per-character saved variables with a merged proxy view.
+
+## Version: 1.0
+## Author: Nosink Ð
+
+## X-Category: Library
+
+## X-License: GNU General Public License v3.0
+## X-GitHub: https://github.com/Nosink/LibSharedVariables-1.0
+
+LibStub/LibStub.lua
+LibSharedVariables-1.0.lua

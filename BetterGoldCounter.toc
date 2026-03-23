@@ -1,14 +1,27 @@
 
 ## Title: BetterGoldCounter
 
-## Interface: 20505, 11508
+## Interface: 20505
 
 ## Notes-enUS: Track and display your gold with session earnings and per-character totals.
 ## Notes-esES: Realiza un seguimiento y muestra tu oro con ganancias por sesión y totales por personaje.
 
 ## Author: Nosink Ð
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: BetterGoldCounterDB
+## SavedVariablesPerCharacter: BetterGoldCounterPCDB
+
+# Libraries
+libs/LibStub/LibStub.lua
+libs/LibEventBus-1.0/LibEventBus-1.0.lua
+libs/LibSharedVariables-1.0/LibSharedVariables-1.0.lua
+
+libs/debug.lua
+libs/utils.lua
+
+# Addon - Core
+addon.lua
+database.lua
 
 # Module: Localization
 localization/localization.lua
@@ -16,19 +29,12 @@ localization/enUS.lua
 localization/esES-esMX.lua
 # --------------------
 
-# Module: Events
-events/bus.lua
-# --------------------
-
-# Module: DataBase
-database/data.lua
-database/database.lua
-# --------------------
-
 # Module: Configuration
 configuration/builder.lua
 configuration/frames/checkbox.lua
 configuration/frames/editbox.lua
+configuration/frames/dropDown.lua
+configuration/frames/button.lua
 configuration/frames/slider.lua
 # --------------------
 configuration/panel.lua
@@ -36,16 +42,13 @@ configuration/commands.lua
 configuration/settings.lua
 # --------------------
 
-# Addon - Core
-utils.lua
-data.lua
-addon.lua
-
 # MVC Player Money Counter
-model/money.lua
-view/label.lua
+model/player.lua
 view/frame.lua
 controller/player.lua
+
+# Daily Reset
+controller/reset.lua
 
 # Chat
 view/chat.lua

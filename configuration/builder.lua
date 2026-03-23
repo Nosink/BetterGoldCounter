@@ -29,15 +29,16 @@ function ns.builder.CreateTitle(self, text)
     self.anchor = body
 end
 
-function ns.builder.CreateSection(self, text)
+function ns.builder.CreateSection(self, text, anchor)
     local title = self.optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    title:SetPoint("TOPLEFT", self.anchor, "BOTTOMLEFT", 0, -8)
+    title:SetPoint("TOPLEFT", anchor or self.anchor, "BOTTOMLEFT", 0, -8)
     title:SetTextColor(1, 0.82, 0, 1)
     title:SetHeight(30)
     title:SetText(text)
     title:Show()
 
     self.anchor = title
+    return title
 end
 
 function ns.builder.Register(self)
