@@ -1,9 +1,9 @@
 local name, ns = ...
 
-function ns.builder.CreateCheckBox(self, text, key, default)
+function ns.builder.CreateCheckBox(self, text, key, anchor, offset)
     local checkBox = CreateFrame("CheckButton", name .. "Options" .. key .. "CB", self.optionsPanel,
         "InterfaceOptionsCheckButtonTemplate")
-    checkBox:SetPoint("TOPLEFT", self.anchor, "BOTTOMLEFT")
+    checkBox:SetPoint("TOPLEFT", anchor or self.anchor, "BOTTOMLEFT", offset or 0, 0)
     checkBox:SetChecked(ns.db[key] or false)
 
     local cbText = _G[checkBox:GetName() .. "Text"]
