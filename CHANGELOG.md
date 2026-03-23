@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.1.0]  - 23/03/2026
+
+### Added
+- New session clean frequency modes: `SESSION`, `DAILY`, and `NEVER`.
+- New `wipe` slash command to clear all stored session counters and character history.
+- New position nudge controls in the options panel (`^`, `v`, `<`, `>`), moving the frame by 1 pixel.
+- New font alignment option (`LEFT`, `CENTER`, `RIGHT`).
+- Bundled local libraries: `LibEventBus-1.0`, `LibSharedVariables-1.0`, and `LibStub`.
+
+### Changed
+- Refactored internals into clearer modules for model, controller, view, and configuration.
+- Reworked saved data model to separate global UI settings and per-character session data.
+- Updated options panel with grouped controls for position, appearance, session behavior, width, and fade.
+- Updated slash command handling to include aliases for opening settings and clearing session.
+
+### Fixed
+- Improved session restoration flow during login and UI reload.
+- Improved daily rollover handling by storing daily record and resetting the proper session counters.
+- Improved frame update consistency for size, alignment, fade alpha, and backdrop refresh after setting changes.
+
+
 ## [1.0.5] - 14/01/2026
 Fixed installation processs
 Added interface support for classic
