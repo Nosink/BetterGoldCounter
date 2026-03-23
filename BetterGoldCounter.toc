@@ -6,6 +6,8 @@
 ## Notes-enUS: Track and display your gold with session earnings and per-character totals.
 ## Notes-esES: Realiza un seguimiento y muestra tu oro con ganancias por sesión y totales por personaje.
 
+## OptionalDeps: LibStub, LibEventBus-1.0, LibSharedVariables-1.0
+
 ## Author: Nosink Ð
 ## Version: 1.1.0
 ## SavedVariables: BetterGoldCounterDB
