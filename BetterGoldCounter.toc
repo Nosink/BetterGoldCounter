@@ -1,56 +1,81 @@
 
 ## Title: BetterGoldCounter
 
-## Interface: 20505
+## Interface: 20506
+## Category: Economy
 
-## Notes-enUS: Track and display your gold with session earnings and per-character totals.
-## Notes-esES: Realiza un seguimiento y muestra tu oro con ganancias por sesión y totales por personaje.
+## Notes: X
+## Notes-enGB: X
+## Notes-esES: X
+## Notes-esMX: X
+## Notes-ruRU: X
+## Notes-deDE: X
+## Notes-frFR: X
+## Notes-itIT: X
+## Notes-ptBR: X
+## Notes-koKR: X
+## Notes-zhCN: X
+## Notes-zhTW: X
 
-## OptionalDeps: LibStub, LibEventBus-1.0, LibSharedVariables-1.0
 
 ## Author: Nosink Ð
-## Version: 1.1.0
+## Version: 1.2.0
+## X-Version: 1.2.0
+## IconTexture: Interface\Icons\inv_misc_coin_01
+
 ## SavedVariables: BetterGoldCounterDB
 ## SavedVariablesPerCharacter: BetterGoldCounterPCDB
 
-# Libraries
-libs/LibStub/LibStub.lua
-libs/LibEventBus-1.0/LibEventBus-1.0.lua
-libs/LibSharedVariables-1.0/LibSharedVariables-1.0.lua
+# Enum
+enum/enum.lua
 
-libs/debug.lua
-libs/utils.lua
+# Events
+event/bus.lua
+
+# Database
+database/database.lua
+
+# Localization
+localization/localization.lua
+
+# Settings
+settings/builder/helper.lua
+settings/builder/panel.lua
+settings/builder/section.lua
+
+# Settings - Frames
+settings/frames/checkbox.lua
+settings/frames/dropDown.lua
+settings/frames/text.lua
+settings/frames/editbox.lua
+settings/frames/slider.lua
+
+
+# //////////////////////////////
+#            ADDON
+# //////////////////////////////
+
+# Addon - Database
+addon/defaults.lua
+
+# Addon - Locales
+addon/locales/enUS-enGB.lua
+addon/locales/esEs-esMX.lua
+
+# Addon - Core
+addon/settings/panel.lua
+addon/settings/commands.lua
+
+# Addon - MVC
+# ---------------------
+addon/model/player.lua
+# ---------------------
+addon/controller/reset.lua
+addon/controller/player.lua
+# ---------------------
+addon/view/frame.lua
+addon/view/chat.lua
+# ---------------------
 
 # Addon - Core
 addon.lua
-database.lua
-
-# Module: Localization
-localization/localization.lua
-localization/enUS.lua
-localization/esES-esMX.lua
-# --------------------
-
-# Module: Configuration
-configuration/builder.lua
-configuration/frames/checkbox.lua
-configuration/frames/editbox.lua
-configuration/frames/dropDown.lua
-configuration/frames/button.lua
-configuration/frames/slider.lua
-# --------------------
-configuration/panel.lua
-configuration/commands.lua
-configuration/settings.lua
-# --------------------
-
-# MVC Player Money Counter
-model/player.lua
-view/frame.lua
-controller/player.lua
-
-# Daily Reset
-controller/reset.lua
-
-# Chat
-view/chat.lua

@@ -1,13 +1,11 @@
 local _, ns = ...
 
-ns.locale = ns.locale or GetLocale()
+ns.locale = GetLocale()
 
-local L = setmetatable({}, {
-    __index = function(t, k)
-        local v = tostring(k)
-        rawset(t, k, v)
-        return v
-    end
+ns.L = setmetatable({}, {
+    __index = function(table, key)
+        local value = tostring(key)
+        rawset(table, key, value)
+        return value
+    end,
 })
-
-ns.L = L
