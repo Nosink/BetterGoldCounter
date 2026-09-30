@@ -31,6 +31,10 @@ function section:AddEditBox(text, key, params)
     return self:addControl(ns.builder.CreateEditBox(self, text, key, params))
 end
 
+function section:AddSlider(text, key, params)
+    return self:addControl(ns.builder.CreateSlider(self, text, key, params))
+end
+
 function section:Fetch()
     for _, control in ipairs(self.controls) do
         if control.Fetch then control:Fetch() end
