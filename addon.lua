@@ -1,6 +1,5 @@
 local name, ns = ...
 
-
 local function onPlayerEnteringWorld(_, isInitialLogin, _)
     if isInitialLogin then
         ns.bus:TriggerEvent(name .. "_IS_INITIAL_LOGIN")

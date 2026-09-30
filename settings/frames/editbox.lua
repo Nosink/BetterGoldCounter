@@ -1,20 +1,44 @@
 local name, ns = ...
 
-function ns.builder.CreateEditBox(self, text, key)
-    local label = self.optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    label:SetPoint("TOPLEFT", self.anchor, "BOTTOMLEFT", 0, -4)
-    local font, _, flags = label:GetFont()
-    label:SetFont(tostring(font), 12, flags)
-    label:SetTextColor(1, 1, 1, 1)
-    label:SetText(" " .. text)
+local label = {}
+local editBox = {}
 
-    local editBox = CreateFrame("EditBox", name .. "Options" .. key .. "EB", self.optionsPanel, "InputBoxTemplate")
-    editBox:SetPoint("LEFT", label, "RIGHT", 10, 0)
-    editBox:SetAutoFocus(false)
-    editBox:SetJustifyH("CENTER")
-    editBox:SetSize(45, 22)
-    editBox:SetText(tostring(ns.db[key]) or "")
+local function createLabel(section, text, params)
+    local fontString = params and params.fontString or
+        ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
+    local point = params and params.textPoint or
+        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", 0, -4)
 
+    label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
+    label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+end
+
+local function setLabelText(text, params)
+    local color = params and params.textColor or
+        ns.builder.color(1, 1, 1, 1)
+    local size = params and params.size or
+        12
+
+    local file, _, flags = label:GetFont()
+    label:SetFont(tostring(file), size, flags)
+    label:SetTextColor(color.r, color.g, color.b, color.a)
+    label:SetText(text)
+end
+
+local function createEditBox(section, key, params)
+    local point = params and params.controlPoint or
+        ns.builder.point("LEFT", label, "RIGHT", 10, 5)
+
+    editBox = CreateFrame("EditBox", nil, section.optionsPanel, "InputBoxTemplate")
+    editBox:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+end
+
+local function setEditBoxText(key)
+    local value = ns.db and ns.db[key]
+    editBox:SetText(value == nil and "" or tostring(value))
+end
+
+local function setEvents(key)
     editBox:SetScript("OnTextChanged", function(self, userInput)
         if not userInput then return end
         ns.db[key] = self:GetText()
@@ -24,11 +48,34 @@ function ns.builder.CreateEditBox(self, text, key)
     editBox:SetScript("OnEnterPressed", function(self)
         self:ClearFocus()
     end)
+end
 
-    editBox.FetchFromDB = function(self)
-        self:SetText(tostring(ns.db[key]))
+local function setSize(params)
+    local width = params and params.width or 45
+    local height = params and params.height or 22
+
+    editBox:SetAutoFocus(false)
+    editBox:SetJustifyH(params and params.justifyH or "CENTER")
+    editBox:SetSize(width, height)
+end
+
+local function setFetch(key)
+    editBox.Fetch = function(self)
+        local currentValue = ns.db[key]
+        self:SetText(currentValue == nil and "" or tostring(currentValue))
     end
+end
 
-    self.anchor = label
+function ns.builder.CreateEditBox(section, text, key, params)
+    createLabel(section, text, params)
+    setLabelText(text, params)
+
+    createEditBox(section, key, params)
+    setSize(params)
+    setEvents(key)
+    setEditBoxText(key)
+    setFetch(key)
+
+    section:setAnchor(label)
     return editBox
 end
