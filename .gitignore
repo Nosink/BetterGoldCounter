@@ -42,3 +42,6 @@ builds/*
 
 # VSCode settings folder
 .vscode/
+
+# Ignore build folder
+build/
