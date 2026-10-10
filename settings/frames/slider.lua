@@ -3,8 +3,10 @@ local name, ns = ...
 local slider = {}
 
 local function createSlider(section, key, params)
+    local offset = params and params.offset or
+        ns.builder.offset(0, -30)
     local point = params and params.controlPoint or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", 0, -30)
+        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     slider = CreateFrame("Slider", name .. "Options" .. key .. "SL", section.optionsPanel, "OptionsSliderTemplate")
     slider:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)

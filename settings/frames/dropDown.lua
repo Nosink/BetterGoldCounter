@@ -6,8 +6,10 @@ local dropDown = {}
 local function createLabel(section, params)
     local fontString = params and params.fontString or
         ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
-    local point = params and params.textPoint or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", 0, -8)
+    local offset = params and params.offset or
+        ns.builder.offset(0, -8)
+    local point = params and params.controlPoint or
+        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     label = section.anchor:CreateFontString(fontString.name, fontString.layer, fontString.template)
     label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)

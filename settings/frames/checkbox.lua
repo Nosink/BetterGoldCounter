@@ -3,8 +3,10 @@ local name, ns = ...
 local checkBox = {}
 
 local function createCheckBox(section, params)
-    local point = params and params.point or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT")
+    local offset = params and params.offset or
+        ns.builder.offset(0, 0)
+    local point = params and params.controlPoint or
+        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     checkBox = CreateFrame("CheckButton", nil, section.optionsPanel, "InterfaceOptionsCheckButtonTemplate")
     local fontString = checkBox:CreateFontString(nil, "ARTWORK", "GameFontNormal")

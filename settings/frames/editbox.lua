@@ -6,8 +6,10 @@ local editBox = {}
 local function createLabel(section, text, params)
     local fontString = params and params.fontString or
         ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
-    local point = params and params.textPoint or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", 0, -4)
+    local offset = params and params.offset or
+        ns.builder.offset(0, -10)
+    local point = params and params.controlPoint or
+        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
     label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
@@ -27,7 +29,7 @@ end
 
 local function createEditBox(section, key, params)
     local point = params and params.controlPoint or
-        ns.builder.point("LEFT", label, "RIGHT", 10, 5)
+        ns.builder.point("LEFT", label, "RIGHT", 10, 0)
 
     editBox = CreateFrame("EditBox", nil, section.optionsPanel, "InputBoxTemplate")
     editBox:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)

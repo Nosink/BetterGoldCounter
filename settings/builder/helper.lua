@@ -28,3 +28,7 @@ function ns.builder.fontString(name, layer, template)
         template = template or "GameFontNormal"
     }
 end
+
+function ns.builder.offset(x, y)
+    return { x = x or 0, y = y or 0 }
+end
