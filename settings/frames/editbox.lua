@@ -35,15 +35,36 @@ local function createEditBox(section, key, params)
     editBox:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
 end
 
-local function setEditBoxText(key)
-    local value = ns.db and ns.db[key]
-    editBox:SetText(value == nil and "" or tostring(value))
+local function setSize(params)
+    local width = params and params.width or
+        45
+    local height = params and params.height or
+        22
+
+    editBox:SetAutoFocus(false)
+    editBox:SetJustifyH(params and params.justifyH or "CENTER")
+    editBox:SetSize(width, height)
+end
+
+local function setValidator(params)
+    local validator = params and params.validator or
+        ns.builder.noValidator()
+
+    editBox.validator = validator
 end
 
 local function setEvents(key)
-    editBox:SetScript("OnTextChanged", function(self, userInput)
-        if not userInput then return end
-        ns.db[key] = self:GetText()
+    ns.bus:HookScript(editBox, "OnShow", function(self)
+        self:SetCursorPosition(0)
+    end)
+
+    editBox:SetScript("OnEditFocusLost", function(self)
+        local text = self:GetText()
+        if not self.validator.validate(text) then
+            text = self.validator.normalize(text)
+            self:SetText(text)
+        end
+        ns.db[key] = text
         ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
     end)
 
@@ -52,19 +73,10 @@ local function setEvents(key)
     end)
 end
 
-local function setSize(params)
-    local width = params and params.width or 45
-    local height = params and params.height or 22
-
-    editBox:SetAutoFocus(false)
-    editBox:SetJustifyH(params and params.justifyH or "CENTER")
-    editBox:SetSize(width, height)
-end
-
 local function setFetch(key)
     editBox.Fetch = function(self)
-        local currentValue = ns.db[key]
-        self:SetText(currentValue == nil and "" or tostring(currentValue))
+        local value = ns.db and ns.db[key]
+        self:SetText(tostring(value))
     end
 end
 
@@ -74,8 +86,8 @@ function ns.builder.CreateEditBox(section, text, key, params)
 
     createEditBox(section, key, params)
     setSize(params)
+    setValidator(params)
     setEvents(key)
-    setEditBoxText(key)
     setFetch(key)
 
     section:setAnchor(label)
