@@ -11,7 +11,7 @@ local function createLabel(section, params)
     local point = params and params.controlPoint or
         ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
-    label = section.anchor:CreateFontString(fontString.name, fontString.layer, fontString.template)
+    label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
     label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
 end
 
@@ -31,7 +31,7 @@ local function createDropDown(section, key, params)
     local point = params and params.controlPoint or
         ns.builder.point("LEFT", label, "RIGHT", 6)
 
-    dropDown = CreateFrame("Frame", nil, section.anchor, "UIDropDownMenuTemplate")
+    dropDown = CreateFrame("Frame", nil, section.optionsPanel, "UIDropDownMenuTemplate")
     dropDown:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
 end
 

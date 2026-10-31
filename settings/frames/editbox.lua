@@ -8,7 +8,7 @@ local function createLabel(section, text, params)
         ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
     local offset = params and params.offset or
         ns.builder.offset(0, -10)
-    local point = params and params.controlPoint or
+    local point = params and params.textPoint or
         ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
