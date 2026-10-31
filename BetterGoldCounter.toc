@@ -26,30 +26,8 @@
 ## SavedVariables: BetterGoldCounterDB
 ## SavedVariablesPerCharacter: BetterGoldCounterPCDB
 
-# Enum
-enum/enum.lua
-
-# Events
-event/bus.lua
-
-# Database
-database/database.lua
-
-# Localization
-localization/localization.lua
-
-# Settings
-settings/builder/helper.lua
-settings/builder/panel.lua
-settings/builder/section.lua
-
-# Settings - Frames
-settings/frames/checkbox.lua
-settings/frames/dropDown.lua
-settings/frames/text.lua
-settings/frames/editbox.lua
-settings/frames/slider.lua
-
+# _CORE
+core.xml
 
 # //////////////////////////////
 #            ADDON
@@ -59,8 +37,7 @@ settings/frames/slider.lua
 addon/defaults.lua
 
 # Addon - Locales
-addon/locales/enUS-enGB.lua
-addon/locales/esEs-esMX.lua
+addon/locales/locales.xml
 
 # Addon - Core
 addon/settings/panel.lua
