@@ -1,1 +1,33 @@
-C:/Users/Ricard/Proyectos/Addons/_CORE/core.xml
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    # Enum
+    <Script file="enum/enum.lua" />
+    # Enum - Data
+    <Script file="enum/data/classType.lua" />
+    <Script file="enum/data/reactionType.lua" />
+    <Script file="enum/data/expansionType.lua" />
+
+    # Events
+    <Script file="event/bus.lua" />
+
+    # Database
+    <Script file="database/database.lua" />
+
+    # Localization
+    <Script file="localization/localization.lua" />
+
+    # Settings
+    <Script file="settings/builder/helper.lua" />
+    <Script file="settings/builder/panel.lua" />
+    <Script file="settings/builder/section.lua" />
+    <Script file="settings/builder/validators.lua" />
+
+    # Settings - Frames
+    <Script file="settings/frames/checkbox.lua" />
+    <Script file="settings/frames/dropDown.lua" />
+    <Script file="settings/frames/editBox.lua" />
+    <Script file="settings/frames/slider.lua" />
+    <Script file="settings/frames/text.lua" />
+</Ui>
+
+
+adsf
