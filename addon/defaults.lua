@@ -22,12 +22,12 @@ local defaults = {
     fadeOutOpacity = 0.5,
     fadeInOpacity = 1.0,
     fadeDuration = 0.1,
-    cleanFrequency = "SESSION",
-
-    records = false,
 }
 
 local defaultsPC = {
+    cleanFrequency = "SESSION",
+
+    records = nil,
 }
 
 ns.database.Register(defaults, defaultsPC)
