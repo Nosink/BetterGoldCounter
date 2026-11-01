@@ -1,11 +1,7 @@
 local name, ns = ...
 
-local function onPlayerEnteringWorld(_, isInitialLogin, _)
-    if isInitialLogin then
-        ns.bus:TriggerEvent(name .. "_IS_INITIAL_LOGIN")
-    else
-        ns.bus:TriggerEvent(name .. "_IS_RELOADING_UI")
-    end
+local function onPlayerEnteringWorld(_, isInitialLogin)
+    ns.bus:TriggerEvent(name .. "_PLAYER_ENTERING_WORLD", isInitialLogin)
 end
 
 ns.bus:RegisterEvent("PLAYER_ENTERING_WORLD", onPlayerEnteringWorld)

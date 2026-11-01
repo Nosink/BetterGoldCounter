@@ -2,8 +2,8 @@ local _, ns = ...
 
 local defaults = {
     -- Position
-    x = GetScreenWidth() / 2,
-    y = GetScreenHeight() / 2,
+    x = nil,
+    y = nil,
 
     -- Backdrop
     locked = false,
@@ -22,13 +22,12 @@ local defaults = {
     fadeOutOpacity = 0.5,
     fadeInOpacity = 1.0,
     fadeDuration = 0.1,
-}
-
-local defaultsPC = {
     cleanFrequency = "SESSION",
 
     records = false,
+}
 
+local defaultsPC = {
 }
 
 ns.database.Register(defaults, defaultsPC)

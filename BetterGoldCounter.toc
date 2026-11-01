@@ -17,10 +17,8 @@
 ## Notes-zhCN: X
 ## Notes-zhTW: X
 
-
 ## Author: Nosink Ð
 ## Version: 1.2.0
-## X-Version: 1.2.0
 ## IconTexture: Interface\Icons\inv_misc_coin_01
 
 ## SavedVariables: BetterGoldCounterDB
@@ -29,16 +27,16 @@
 # _CORE
 core.xml
 
-# Addon - Database
-addon/defaults.lua
-
 # Addon - Data
 addon/data/frequency.lua
+
+# Addon - Database
+addon/defaults.lua
 
 # Addon - Locales
 addon/locales/locales.xml
 
-# Addon - Core
+# Addon - Settings
 addon/settings/panel.lua
 addon/settings/commands.lua
 
@@ -46,7 +44,7 @@ addon/settings/commands.lua
 # ---------------------
 addon/model/player.lua
 # ---------------------
-#addon/controller/player.lua
+addon/controller/player.lua
 # ---------------------
 #addon/view/frame.lua
 #addon/view/chat.lua
