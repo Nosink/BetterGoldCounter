@@ -2,12 +2,50 @@ local name, ns = ...
 
 local frame = nil
 local default = 0
+local defaultBackdropAlpha = 0.85
+local defaultFontSize = 8
+local defaultWidth = 50
+local defaultFadeDuration = 0.01
+
+local function getSignSymbol(amount)
+    if type(amount) ~= "number" then return "" end
+
+    return amount < 0 and "-" or amount > 0 and "+" or ""
+end
+
+local function fadeIn(target, duration, targetAlpha)
+    if not target then return end
+
+    UIFrameFade(target, {
+        mode = "IN",
+        timeToFade = duration or 0.5,
+        startAlpha = target:GetAlpha() or 0,
+        endAlpha = targetAlpha or 1,
+    })
+end
+
+local function fadeOut(target, duration, targetAlpha)
+    if not target then return end
+
+    UIFrameFade(target, {
+        mode = "OUT",
+        timeToFade = duration or 0.5,
+        startAlpha = target:GetAlpha() or 1,
+        endAlpha = targetAlpha or 0,
+    })
+end
 
 local function SetPosition()
     if not frame then return end
 
     frame.SetFramePosition = function(self)
-        local x, y = settings.GetPosition()
+        local x, y = ns.db.x, ns.db.y
+        if not x or not y then
+            local width, height = UIParent:GetSize()
+            x, y = math.floor(width / 2), math.floor(height / 2)
+        else
+            x, y = tonumber(x), tonumber(y)
+        end
         frame:ClearAllPoints()
         frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
     end
@@ -24,22 +62,22 @@ local function SetAlpha()
     if not frame then return end
 
     frame.SetFrameAlpha = function(self)
-        local alpha = settings.GetFadeOpacity()
+        local alpha = ns.db.fade and ns.db.fadeOutOpacity or ns.db.fadeInOpacity
         self:SetAlpha(alpha)
     end
 
     local function onEnter(self)
-        if not settings.IsFadeEnabled() then return end
-        local duration = settings.GetFadeDuration()
-        local targetAlpha = settings.GetFadeInOpacity()
-        utils.FadeIn(self, duration, targetAlpha)
+        if not ns.db.fade then return end
+        local duration = tonumber(ns.db.fadeDuration) or defaultFadeDuration
+        if duration < defaultFadeDuration then duration = defaultFadeDuration end
+        fadeIn(self, duration, ns.db.fadeInOpacity)
     end
 
     local function onLeave(self)
-        if not settings.IsFadeEnabled() then return end
-        local duration = settings.GetFadeDuration()
-        local targetAlpha = settings.GetFadeOutOpacity()
-        utils.FadeOut(self, duration, targetAlpha)
+        if not ns.db.fade then return end
+        local duration = tonumber(ns.db.fadeDuration) or defaultFadeDuration
+        if duration < defaultFadeDuration then duration = defaultFadeDuration end
+        fadeOut(self, duration, ns.db.fadeOutOpacity)
     end
 
     frame:SetFrameAlpha()
@@ -59,7 +97,7 @@ local function SetBackdrop()
         insets = { left = 3, right = 3, top = 3, bottom = 3 },
     }
     frame.SetBackdropAlpha = function(self)
-        local backdropAlpha = settings.GetBackdropAlpha()
+        local backdropAlpha = ns.db.backdrop and defaultBackdropAlpha or 0.0
         self:SetBackdropColor(0, 0, 0, backdropAlpha)
         self:SetBackdropBorderColor(1.0, 1.0, 1.0, backdropAlpha)
     end
@@ -72,7 +110,7 @@ local function RegisterDrag()
 
     local function onUpdate(self)
         local x, y = self:GetCenter()
-        settings.SetPosition(math.floor(x), math.floor(y))
+        ns.db.x, ns.db.y = math.floor(x), math.floor(y)
     end
 
     local function onDragStop(self)
@@ -81,7 +119,7 @@ local function RegisterDrag()
     end
 
     local function onDragStart(self)
-        if (settings.IsFrameUnlocked()) then
+        if not ns.db.locked then
             self:StartMoving()
         end
         self:SetScript("OnDragStop", onDragStop)
@@ -119,7 +157,7 @@ local function CreateLabelFontString()
 end
 
 local function getMoneyString(amount)
-    local sign = utils.GetSignSymbol(tonumber(amount))
+    local sign = getSignSymbol(tonumber(amount))
     local moneyString = GetMoneyString(math.abs(amount))
     return (sign .. " " .. moneyString)
 end
@@ -141,16 +179,31 @@ local function CreateUpdateTextMethod()
     if not frame then return end
 
     frame.CalculateSize = function(self)
-        local height = settings.GetFontSize() * 1.8
-        local dynamicWidth = self.label:GetStringWidth() + settings.GetFontSize() * 2.2
-        local width = settings.IsDynamicWidth() and dynamicWidth or settings.GetWidth()
+        local fontSize = tonumber(ns.db.fontSize) or defaultFontSize
+        if fontSize < defaultFontSize then fontSize = defaultFontSize end
+        local height = fontSize * 1.8
+        local dynamicWidth = self.label:GetStringWidth() + fontSize * 2.2
+        local staticWidth = tonumber(ns.db.width) or defaultWidth
+        if staticWidth < defaultWidth then staticWidth = defaultWidth end
+        local width = ns.db.dynamicWidth and dynamicWidth or staticWidth
         return width, height
     end
 
     frame.SetFrameSize = function(self)
         local fontName, _, flags = self.label:GetFont()
-        self.label:SetFont(tostring(fontName), settings.GetFontSize(), flags)
-        local alignment, offset = settings.GetFontPoint()
+        local fontSize = tonumber(ns.db.fontSize) or defaultFontSize
+        if fontSize < defaultFontSize then fontSize = defaultFontSize end
+        self.label:SetFont(tostring(fontName), fontSize, flags)
+        local alignment = ns.db.fontAlignment
+        local offset = 0
+        if alignment == "LEFT" then
+            offset = fontSize * 0.6
+        elseif alignment == "RIGHT" then
+            offset = -fontSize * 1.5
+        elseif alignment ~= "CENTER" then
+            alignment = "RIGHT"
+            offset = -fontSize * 1.5
+        end
         self.label:ClearAllPoints()
         self.label:SetPoint(alignment, self, alignment, offset, 0)
 
@@ -205,13 +258,13 @@ ns.bus:RegisterEvent(name .. "_PLAYER_MONEY_CACHED", onSessionMoneyChanged)
 local function onSettingChanged(_, key)
     if not frame then return end
 
-    if (key == "xy") then
+    if key == "xy" then
         frame:SetFramePosition()
-    elseif (key == "width" or key == "dynamicWidth" or key == "fontSize" or key == "fontAlignment" or key == "xy") then
+    elseif key == "width" or key == "dynamicWidth" or key == "fontSize" or key == "fontAlignment" then
         frame:SetFrameSize()
-    elseif (key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity") then
+    elseif key == "fade" or key == "fadeInOpacity" or key == "fadeOutOpacity" then
         frame:SetFrameAlpha()
-    elseif (key == "backdrop") then
+    elseif key == "backdrop" then
         frame:SetBackdropAlpha()
     end
 end
