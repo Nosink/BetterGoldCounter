@@ -1,8 +1,5 @@
 local name, ns = ...
 
-local utils = ns.utils
-local settings = ns.settings
-
 local frame = nil
 local default = 0
 
@@ -189,7 +186,7 @@ local function SetText(amount)
     frame:UpdateFrameAndText(amount)
 end
 
-local function onPlayerModalReady(_)
+local function onAddonLoaded(_)
     createFrame()
     CreateLabel()
 
@@ -201,6 +198,9 @@ local function onSessionMoneyChanged(_, sessionMoney)
 
     SetText(sessionMoney)
 end
+
+ns.bus:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
+ns.bus:RegisterEvent(name .. "_PLAYER_MONEY_CACHED", onSessionMoneyChanged)
 
 local function onSettingChanged(_, key)
     if not frame then return end
@@ -216,6 +216,4 @@ local function onSettingChanged(_, key)
     end
 end
 
-ns.bus:RegisterEvent(name .. "_PLAYER_MODAL_READY", onPlayerModalReady)
-ns.bus:RegisterEvent(name .. "_SESSION_MONEY_CHANGED", onSessionMoneyChanged)
 ns.bus:RegisterEvent(name .. "_SETTINGS_CHANGED", onSettingChanged)

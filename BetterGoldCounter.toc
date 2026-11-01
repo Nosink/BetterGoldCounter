@@ -46,8 +46,7 @@ addon/model/player.lua
 # ---------------------
 addon/controller/player.lua
 # ---------------------
-#addon/view/frame.lua
-#addon/view/chat.lua
+addon/view/frame.lua
 # ---------------------
 
 # Addon - Core

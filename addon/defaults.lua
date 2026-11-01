@@ -2,8 +2,8 @@ local _, ns = ...
 
 local defaults = {
     -- Position
-    x = nil,
-    y = nil,
+    x = GetScreenWidth() / 2,
+    y = GetScreenHeight() / 2,
 
     -- Backdrop
     locked = false,
@@ -25,9 +25,8 @@ local defaults = {
 }
 
 local defaultsPC = {
-    cleanFrequency = "SESSION",
-
-    records = nil,
+    session = 0,
+    records = {},
 }
 
 ns.database.Register(defaults, defaultsPC)
