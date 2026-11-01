@@ -29,12 +29,11 @@
 # _CORE
 core.xml
 
-# //////////////////////////////
-#            ADDON
-# //////////////////////////////
-
 # Addon - Database
 addon/defaults.lua
+
+# Addon - Data
+addon/data/frequency.lua
 
 # Addon - Locales
 addon/locales/locales.xml
@@ -47,11 +46,10 @@ addon/settings/commands.lua
 # ---------------------
 addon/model/player.lua
 # ---------------------
-addon/controller/reset.lua
-addon/controller/player.lua
+#addon/controller/player.lua
 # ---------------------
-addon/view/frame.lua
-addon/view/chat.lua
+#addon/view/frame.lua
+#addon/view/chat.lua
 # ---------------------
 
 # Addon - Core

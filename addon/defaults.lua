@@ -1,9 +1,4 @@
-local name, ns = ...
-
-ns.db = ns.db or {}
-ns.dbHandle = ns.dbHandle or nil
-
-local LibSharedVariables = LibStub("LibSharedVariables-1.0")
+local _, ns = ...
 
 local defaults = {
     -- Position
@@ -16,7 +11,7 @@ local defaults = {
 
     -- Font
     fontSize = 12,
-    fontAlignment = "RIGHT", -- "LEFT", "CENTER", "RIGHT"
+    fontAlignment = "RIGHT",
 
     -- Width
     dynamicWidth = false,
@@ -30,26 +25,10 @@ local defaults = {
 }
 
 local defaultsPC = {
-    -- Data consistency
-    lastLogin = "",
-    cleanFrequency = "SESSION", -- "SESSION", "DAILY", "NEVER"
+    cleanFrequency = "SESSION",
 
-    -- Stored data (false sentinel: avoids mutable table aliasing through defaults)
     records = false,
 
-    -- Session tracking
-    session = 0,
-    dailySession = 0,
-    allTimeSession = 0,
 }
 
-local function handleOnLoadDatabase(db)
-    ns.db = db
-    ns.bus:TriggerEvent(name .. "_VARIABLES_LOADED")
-end
-
-local function onVariablesLoaded()
-    LibSharedVariables:Load(name, defaults, defaultsPC, handleOnLoadDatabase)
-end
-
-ns.bus:RegisterEvent("VARIABLES_LOADED", onVariablesLoaded)
+ns.database.Register(defaults, defaultsPC)
