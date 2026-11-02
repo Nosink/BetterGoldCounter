@@ -29,7 +29,7 @@ end
 
 local function createDropDown(section, key, params)
     local point = params and params.controlPoint or
-        ns.builder.point("LEFT", label, "RIGHT", 6)
+        ns.builder.point("LEFT", label, "RIGHT", 6, -2)
 
     dropDown = CreateFrame("Frame", nil, section.optionsPanel, "UIDropDownMenuTemplate")
     dropDown:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
