@@ -239,21 +239,17 @@ local function SetText(amount)
     frame:UpdateFrameAndText(amount)
 end
 
-local function onAddonLoaded(_)
+
+local function onSessionMoneyChanged(_, netChange)
     createFrame()
     CreateLabel()
-
-    SetText(default)
-end
-
-local function onSessionMoneyChanged(_, sessionMoney)
     if not frame then return end
 
-    SetText(sessionMoney)
+
+    SetText(netChange or 0)
 end
 
-ns.bus:RegisterEvent(name .. "_ADDON_LOADED", onAddonLoaded)
-ns.bus:RegisterEvent(name .. "_PLAYER_MONEY_CACHED", onSessionMoneyChanged)
+ns.bus:RegisterEvent(name .. "_PLAYER_NET_CHANGE", onSessionMoneyChanged)
 
 local function onSettingChanged(_, key)
     if not frame then return end
