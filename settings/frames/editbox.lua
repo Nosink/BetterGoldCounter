@@ -30,9 +30,17 @@ end
 local function createEditBox(section, key, params)
     local point = params and params.controlPoint or
         ns.builder.point("LEFT", label, "RIGHT", 10, 0)
+    local isNumeric = params and params.isNumeric or
+        false
+    local allowDecimals = params and params.allowDecimals or
+        false
 
     editBox = CreateFrame("EditBox", nil, section.optionsPanel, "InputBoxTemplate")
     editBox:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+    editBox:SetNumeric(isNumeric)
+    if (allowDecimals and isNumeric) then
+        editBox:SetNumericFullRange(isNumeric)
+    end
 end
 
 local function setSize(params)
