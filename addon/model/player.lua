@@ -50,17 +50,16 @@ local function onPlayerMoney(_, record)
 end
 
 local function onPlayerEnteringWorld(_, isInitialLogin)
-    local session = ns.db.session or 0
-
     updateMoney()
 
     if isInitialLogin then
         netChange = 0
+        ns.db.session = 0
     else
-        netChange = session
+        netChange = ns.db.session
     end
 
-    ns.bus:TriggerEvent(name .. "_PLAYER_MONEY_CACHED")
+    ns.bus:TriggerEvent(name .. "_PLAYER_NET_CHANGE", netChange)
 end
 
 ns.bus:RegisterEvent(name .. "_PLAYER_MONEY", onPlayerMoney)
