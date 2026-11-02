@@ -1,58 +1,127 @@
 local name, ns = ...
 
+local label = {}
 local slider = {}
+local editBox = {}
 
-local function createSlider(section, key, params)
+local function createLabel(section, text, params)
+    local fontString = params and params.fontString or
+        ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
     local offset = params and params.offset or
-        ns.builder.offset(0, -30)
-    local point = params and params.controlPoint or
+        ns.builder.offset(0, -8)
+    local point = params and params.textPoint or
         ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
-    slider = CreateFrame("Slider", name .. "Options" .. key .. "SL", section.optionsPanel, "OptionsSliderTemplate")
+    label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
+    label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+
+    local color = params and params.textColor or
+        ns.builder.color(1, 1, 1, 1)
+    local size = params and params.size or
+        12
+    local file, _, flags = label:GetFont()
+    label:SetFont(tostring(file), size, flags)
+    label:SetTextColor(color.r, color.g, color.b, color.a)
+    label:SetText(text)
+end
+
+local function createSlider(section, params)
+    local offset = params and params.offset or
+        ns.builder.offset(10, 0)
+    local point = params and params.controlPoint or
+        ns.builder.point("LEFT", label, "RIGHT", offset.x, offset.y)
+
+    slider = CreateFrame("Slider", nil, section.optionsPanel, "OptionsSliderTemplate")
     slider:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
-    slider:SetMinMaxValues(0, 1)
-    slider:SetValueStep(0.01)
-    slider:SetObeyStepOnDrag(true)
 end
 
-local function setText(text)
-    if slider.Text then slider.Text:SetText(text) end
-    if slider.Low then slider.Low:SetText("0.0") end
-    if slider.High then slider.High:SetText("1.0") end
+local function createEditBox(section, params)
+    local point = params and params.editBoxPoint or
+        ns.builder.point("LEFT", slider, "RIGHT", 10, 0)
+
+    editBox = CreateFrame("EditBox", nil, section.optionsPanel, "InputBoxTemplate")
+    editBox:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+    editBox:SetAutoFocus(false)
+    editBox:SetJustifyH("CENTER")
+    editBox:SetNumeric(true)
+    editBox:SetNumericFullRange(true)
+    editBox:SetSize(params and params.editBoxWidth or 45, params and params.editBoxHeight or 22)
 end
 
-local function createValueText()
-    slider.valueText = slider:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    slider.valueText:SetPoint("RIGHT", slider, "RIGHT", 40, 0)
+local function setWidth(params)
+    local width = params and params.width or
+        100
+
+    slider:SetWidth(width)
 end
 
-local function updateValueText(value)
-    slider.valueText:SetText(string.format("%.2f", value or slider:GetValue()))
+local function setValues(params)
+    local minValue = params and params.values and params.values.min or
+        0
+    local maxValue = params and params.values and params.values.max or
+        100
+    local valueStep = params and params.values and params.values.step or
+        1
+    local obeyStepOnDrag = params and params.values and params.values.obeyStepOnDrag or
+        true
+
+    slider:SetMinMaxValues(minValue, maxValue)
+    slider:SetValueStep(valueStep)
+    slider:SetObeyStepOnDrag(obeyStepOnDrag)
+
+    slider.minValue = minValue
+    slider.maxValue = maxValue
+    slider.valueStep = valueStep
+    slider.Low:SetText(tostring(minValue))
+    slider.High:SetText(tostring(maxValue))
 end
 
-local function setOnValueChanged(key)
+local function setEditBoxValue(value)
+    editBox:SetText(tostring(value))
+end
+
+local function normalizeValue(value)
+    value = tonumber(value)
+    if not value then return slider.minValue end
+    return math.max(slider.minValue, math.min(slider.maxValue, value))
+end
+
+local function setEvents(key)
     slider:SetScript("OnValueChanged", function(self, value)
         ns.db[key] = value
-        updateValueText(value)
+        setEditBoxValue(value)
         ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
+    end)
+
+    editBox:SetScript("OnEditFocusLost", function(self)
+        local value = normalizeValue(self:GetText())
+        self:SetText(tostring(value))
+        slider:SetValue(value)
+    end)
+
+    editBox:SetScript("OnEnterPressed", function(self)
+        self:ClearFocus()
     end)
 end
 
 local function setFetch(key)
     slider.Fetch = function(self)
-        self:SetValue(ns.db[key] or 0)
-        updateValueText(ns.db[key] or 0)
+        local value = ns.db[key]
+        self:SetValue(value)
+        setEditBoxValue(value)
     end
 end
 
 function ns.builder.CreateSlider(section, text, key, params)
-    createSlider(section, key, params)
-    setText(text)
-    createValueText()
-    setFetch(key)
-    setOnValueChanged(key)
-    slider:Fetch()
+    createLabel(section, text, params)
+    createSlider(section, params)
+    createEditBox(section, params)
 
-    section:setAnchor(slider)
+    setValues(params)
+    setWidth(params)
+    setEvents(key)
+    setFetch(key)
+
+    section:setAnchor(label)
     return slider
 end
