@@ -11,62 +11,39 @@ builder:CreateOptionsPanel()
 builder:CreateTitle(L["LKEY_OPTIONS_TITLE"])
 
 -- Options
--- builder:CreateSection(L["LKEY_OPTIONS_POSITION_TITLE"])
--- local lockedCB = builder:CreateCheckBox(L["LKEY_OPTIONS_LOCKED_CB"], "locked")
---
--- local bup = builder:CreateButton("", function()
---     local x, y = ns.settings.GetPosition()
---     local newY = y + 1
---     ns.settings.SetPosition(x, newY)
---     ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
--- end, "^", { width = 24, height = 24 }, lockedCB, 128)
--- local bdown = builder:CreateButton("", function()
---     local x, y = ns.settings.GetPosition()
---     local newY = y - 1
---     ns.settings.SetPosition(x, newY)
---     ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
--- end, "v", { width = 24, height = 24 }, bup)
--- local bleft = builder:CreateButton("", function()
---     local x, y = ns.settings.GetPosition()
---     local newX = x - 1
---     ns.settings.SetPosition(newX, y)
---     ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
--- end, "<", { width = 24, height = 24 }, bdown)
--- builder:CreateButton("", function()
---     local x, y = ns.settings.GetPosition()
---     local newX = x + 1
---     ns.settings.SetPosition(newX, y)
---     ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", "xy")
--- end, ">", { width = 24, height = 24 }, bleft)
---
--- builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"], lockedCB)
--- local backdropCB = builder:CreateCheckBox(L["LKEY_OPTIONS_BACKDROP_CB"], "backdrop")
---
--- builder:CreateSection(L["LKEY_OPTIONS_FONT_SIZE_TITLE"])
--- local fontSizeEB = builder:CreateEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize")
--- local fontAlignmentDD = builder:CreateDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment", {
---     { value = "LEFT",   text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] },
---     { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] },
---     { value = "RIGHT",  text = L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"] },
--- }, "LEFT")
---
--- builder:CreateSection(L["LKEY_OPTIONS_SESSION_TITLE"])
--- local cleanFrequencyDD = builder:CreateDropDown(L["LKEY_OPTIONS_AUTO_CLEAN_TITLE"], "cleanFrequency", {
---     { value = "SESSION", text = L["LKEY_OPTIONS_CLEAN_FREQ_SESSION"] },
---     { value = "DAILY",   text = L["LKEY_OPTIONS_CLEAN_FREQ_DAILY"] },
---     { value = "NEVER",   text = L["LKEY_OPTIONS_CLEAN_FREQ_NEVER"] },
--- }, "LEFT")
---
--- builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])
--- local dynamicWidthCB = builder:CreateCheckBox(L["LKEY_OPTIONS_DYNAMIC_WIDTH_CB"], "dynamicWidth")
--- local widthEB = builder:CreateEditBox(L["LKEY_OPTIONS_STATIC_WIDTH_EB"], "width")
---
--- builder:CreateSection(L["LKEY_OPTIONS_FADE_TITLE"])
--- local fadeCB = builder:CreateCheckBox(L["LKEY_OPTIONS_FADE_CB"], "fade")
--- local fadeDurationEB = builder:CreateEditBox(L["LKEY_OPTIONS_FADE_DURATION_EB"], "fadeDuration")
--- local fadeOutOpacitySL = builder:CreateSlider(L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"], "fadeOutOpacity")
--- local fadeInOpacitySL = builder:CreateSlider(L["LKEY_OPTIONS_FADE_IN_OPACITY_SLIDER"], "fadeInOpacity")
---
+local positionSection = builder:CreateSection(L["LKEY_OPTIONS_POSITION_TITLE"])
+positionSection:AddCheckBox(L["LKEY_OPTIONS_LOCKED_CB"], "locked")
+
+local backDropSection = builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"])
+backDropSection:AddCheckBox(L["LKEY_OPTIONS_BACKDROP_CB"], "backdrop")
+
+local sizeSection = builder:CreateSection(L["LKEY_OPTIONS_FONT_SIZE_TITLE"])
+sizeSection:AddEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize", {
+    validator = builder.inRangeValidator(8, 36), isNumeric = true, allowDecimals = true
+})
+sizeSection:AddDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment", {
+    { value = "LEFT",   text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] },
+    { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] },
+    { value = "RIGHT",  text = L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"] },
+}, { width = 75 })
+
+local widthSection = builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])
+widthSection:AddCheckBox(L["LKEY_OPTIONS_DYNAMIC_WIDTH_CB"], "dynamicWidth")
+widthSection:AddEditBox(L["LKEY_OPTIONS_STATIC_WIDTH_EB"], "width", {
+    validator = builder.inRangeValidator(50, 500), isNumeric = true,
+})
+
+local fadeSection = builder:CreateSection(L["LKEY_OPTIONS_FADE_TITLE"])
+fadeSection:AddCheckBox(L["LKEY_OPTIONS_FADE_CB"], "fade")
+fadeSection:AddEditBox(L["LKEY_OPTIONS_FADE_DURATION_EB"], "fadeDuration",
+    { width = 50, isNumeric = true, allowDecimals = true, validator = builder.inRangeValidator(0, 5) })
+fadeSection:AddSlider(L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"], "fadeOutOpacity", {
+    values = { min = 0, max = 1, step = 0.01 }, width = 150
+})
+fadeSection:AddSlider(L["LKEY_OPTIONS_FADE_IN_OPACITY_SLIDER"], "fadeInOpacity", {
+    values = { min = 0, max = 1, step = 0.01 }, width = 150
+})
+
 -- Register
 builder:Register()
 
