@@ -18,9 +18,12 @@ local backDropSection = builder:CreateSection(L["LKEY_OPTIONS_BACKDROP_TITLE"])
 backDropSection:AddCheckBox(L["LKEY_OPTIONS_BACKDROP_CB"], "backdrop")
 
 local sizeSection = builder:CreateSection(L["LKEY_OPTIONS_FONT_SIZE_TITLE"])
-sizeSection:AddEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize", {
-    validator = builder.inRangeValidator(8, 36), isNumeric = true, allowDecimals = true
-})
+sizeSection:AddEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize",
+    builder.settings.editBox:NewSettings({
+        isNumeric = true,
+        allowDecimals = true,
+        validator = builder.inRangeValidator(8, 36)
+    }, sizeSection.anchor))
 sizeSection:AddDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment", {
     { value = "LEFT",   text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] },
     { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] },
@@ -29,14 +32,17 @@ sizeSection:AddDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment",
 
 local widthSection = builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])
 widthSection:AddCheckBox(L["LKEY_OPTIONS_DYNAMIC_WIDTH_CB"], "dynamicWidth")
-widthSection:AddEditBox(L["LKEY_OPTIONS_STATIC_WIDTH_EB"], "width", {
-    validator = builder.inRangeValidator(50, 500), isNumeric = true,
-})
+widthSection:AddEditBox(L["LKEY_OPTIONS_STATIC_WIDTH_EB"], "width",
+    builder.settings.editBox:NewSettings({
+        validator = builder.inRangeValidator(50, 500), isNumeric = true,
+    }, widthSection.anchor))
 
 local fadeSection = builder:CreateSection(L["LKEY_OPTIONS_FADE_TITLE"])
 fadeSection:AddCheckBox(L["LKEY_OPTIONS_FADE_CB"], "fade")
 fadeSection:AddEditBox(L["LKEY_OPTIONS_FADE_DURATION_EB"], "fadeDuration",
-    { width = 50, isNumeric = true, allowDecimals = true, validator = builder.inRangeValidator(0, 5) })
+    builder.settings.editBox:NewSettings({
+        width = 50, isNumeric = true, allowDecimals = true, validator = builder.inRangeValidator(0, 5)
+    }, fadeSection.anchor))
 fadeSection:AddSlider(L["LKEY_OPTIONS_FADE_OUT_OPACITY_SLIDER"], "fadeOutOpacity", {
     values = { min = 0, max = 1, step = 0.01 }, width = 150
 })

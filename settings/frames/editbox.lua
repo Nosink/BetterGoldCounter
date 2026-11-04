@@ -48,6 +48,7 @@ local function setFetch(editBox, key)
     editBox.Fetch = function(self)
         local value = ns.db and ns.db[key]
         self:SetText(tostring(value))
+        self:SetCursorPosition(0)
     end
 end
 
