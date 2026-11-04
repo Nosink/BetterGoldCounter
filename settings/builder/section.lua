@@ -23,8 +23,8 @@ function section:AddDropDown(text, key, options, params)
     return self:addControl(ns.builder.CreateDropDown(self, text, key, options, params))
 end
 
-function section:AddText(text, params)
-    local anchor, frame = ns.builder.CreateText(self, text, params)
+function section:AddText(text, settings)
+    local anchor, label = ns.builder.CreateText(self, text, settings)
     self:setAnchor(anchor)
     return self:addControl(anchor)
 end
@@ -34,7 +34,9 @@ function section:AddEditBox(text, key, params)
 end
 
 function section:AddSlider(text, key, params)
-    return self:addControl(ns.builder.CreateSlider(self, text, key, params))
+    local anchor, slider = ns.builder.CreateSlider(self, text, key, params)
+    self:setAnchor(anchor)
+    return self:addControl(slider)
 end
 
 function section:Fetch()

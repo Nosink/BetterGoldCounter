@@ -4,22 +4,22 @@ local label = {}
 local slider = {}
 local editBox = {}
 
-local function createLabel(section, text, params)
-    local fontString = params and params.fontString or
+local function createLabel(section, text, settings)
+    local fontString = settings and settings.fontString or
         ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
-    local offset = params and params.offset or
+    local offset = settings and settings.offset or
         ns.builder.offset(0, -8)
-    local point = params and params.textPoint or
+    local point = settings and settings.textPoint or
         ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
     label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
 end
 
-local function setLabelText(text, params)
-    local color = params and params.textColor or
+local function setLabelText(text, settings)
+    local color = settings and settings.textColor or
         ns.builder.color(1, 1, 1, 1)
-    local size = params and params.size or
+    local size = settings and settings.size or
         12
 
     local file, _, flags = label:GetFont()
@@ -28,24 +28,24 @@ local function setLabelText(text, params)
     label:SetText(text)
 end
 
-local function createSlider(section, params)
-    local offset = params and params.offset or
+local function createSlider(section, settings)
+    local offset = settings and settings.offset or
         ns.builder.offset(10, 0)
-    local point = params and params.controlPoint or
+    local point = settings and settings.controlPoint or
         ns.builder.point("LEFT", label, "RIGHT", offset.x, offset.y)
 
     slider = CreateFrame("Slider", nil, section.optionsPanel, "OptionsSliderTemplate")
     slider:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
 end
 
-local function setValues(params)
-    local minValue = params and params.values and params.values.min or
+local function setValues(settings)
+    local minValue = settings and settings.values and settings.values.min or
         0
-    local maxValue = params and params.values and params.values.max or
+    local maxValue = settings and settings.values and settings.values.max or
         100
-    local valueStep = params and params.values and params.values.step or
+    local valueStep = settings and settings.values and settings.values.step or
         1
-    local obeyStepOnDrag = params and params.values and params.values.obeyStepOnDrag or
+    local obeyStepOnDrag = settings and settings.values and settings.values.obeyStepOnDrag or
         true
 
     slider:SetMinMaxValues(minValue, maxValue)
@@ -56,8 +56,8 @@ local function setValues(params)
     slider.High:SetText(tostring(maxValue))
 end
 
-local function setWidth(params)
-    local width = params and params.width or
+local function setWidth(settings)
+    local width = settings and settings.width or
         100
 
     slider:SetWidth(width)
@@ -79,8 +79,8 @@ local function setFetch(key)
     end
 end
 
-local function createEditBox(section, params)
-    local point = params and params.editBoxPoint or
+local function createEditBox(section, settings)
+    local point = settings and settings.editBoxPoint or
         ns.builder.point("LEFT", slider, "RIGHT", 10, 0)
 
     editBox = CreateFrame("EditBox", nil, section.optionsPanel, "InputBoxTemplate")
@@ -95,9 +95,9 @@ local function setEditBoxParams()
     editBox:SetSize(45, 22)
 end
 
-local function setEditorBoxValidator(params)
+local function setEditorBoxValidator(settings)
     local minValue, maxValue = slider:GetMinMaxValues()
-    local validator = params and params.validator or
+    local validator = settings and settings.validator or
         ns.builder.inRangeValidator(minValue, maxValue)
 
     editBox.validator = validator
@@ -135,26 +135,22 @@ local function linkEditBoxToSlider()
     end
 end
 
-function ns.builder.CreateSlider(section, text, key, params)
-    --createLabel(section, text, params)
-    --setLabelText(text, params)
-
-    local _, frame = ns.builder.CreateText(section, text, params)
+function ns.builder.CreateSlider(section, text, key, settings)
+    local _, frame = ns.builder.CreateText(section, text, settings)
     label = frame
 
-    createSlider(section, params)
-    setValues(params)
-    setWidth(params)
+    createSlider(section, settings)
+    setValues(settings)
+    setWidth(settings)
     setEvents(key)
     setFetch(key)
 
-    createEditBox(section, params)
+    createEditBox(section, settings)
     setEditBoxParams()
-    setEditorBoxValidator(params)
+    setEditorBoxValidator(settings)
     setEditBoxEvents(key)
 
     linkEditBoxToSlider()
 
-    section:setAnchor(label)
-    return slider
+    return label, slider
 end
