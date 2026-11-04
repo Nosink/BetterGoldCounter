@@ -4,7 +4,7 @@ local label = {}
 local dropDown = {}
 
 local function createDropDown(section, params)
-    local point = params and params.controlPoint or
+    local point = params and params.point or
         ns.builder.point("LEFT", label, "RIGHT", 6, -2)
 
     dropDown = CreateFrame("Frame", nil, section.optionsPanel, "UIDropDownMenuTemplate")

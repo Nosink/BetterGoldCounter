@@ -10,6 +10,7 @@ function settings:NewSettings(settings, anchor)
 
     local offset = settings.offset or builder.offset()
     local point = builder.point("TOPLEFT", anchor, "BOTTOMLEFT", offset.x, offset.y)
+
     return setmetatable({
         fontString = settings.fontString or builder.fontString(),
         offset = offset,
@@ -17,7 +18,6 @@ function settings:NewSettings(settings, anchor)
         color = settings.color or builder.color(),
         size = settings.size or 12,
         width = settings.width or nil,
-        forceWidth = settings.width and true or false,
         flags = settings.flags or "",
         justify = settings.justify or builder.justify()
     }, self)

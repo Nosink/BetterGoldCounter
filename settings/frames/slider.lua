@@ -7,7 +7,7 @@ local editBox = {}
 local function createSlider(section, settings)
     local offset = settings and settings.offset or
         ns.builder.offset(10, 0)
-    local point = settings and settings.controlPoint or
+    local point = settings and settings.point or
         ns.builder.point("LEFT", label, "RIGHT", offset.x, offset.y)
 
     slider = CreateFrame("Slider", nil, section.optionsPanel, "OptionsSliderTemplate")

@@ -5,7 +5,7 @@ local checkBox = {}
 local function createCheckBox(section, params)
     local offset = params and params.offset or
         ns.builder.offset(0, 0)
-    local point = params and params.controlPoint or
+    local point = params and params.point or
         ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
 
     checkBox = CreateFrame("CheckButton", nil, section.optionsPanel, "InterfaceOptionsCheckButtonTemplate")
