@@ -24,7 +24,9 @@ function section:AddDropDown(text, key, options, params)
 end
 
 function section:AddText(text, params)
-    return self:addControl(ns.builder.CreateText(self, text, params))
+    local anchor, frame = ns.builder.CreateText(self, text, params)
+    self:setAnchor(anchor)
+    return self:addControl(anchor)
 end
 
 function section:AddEditBox(text, key, params)

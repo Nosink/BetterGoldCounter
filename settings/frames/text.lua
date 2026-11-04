@@ -37,6 +37,5 @@ function ns.builder.CreateText(section, text, params)
 
     setText(text, params)
 
-    section:setAnchor(label)
-    return label
+    return label, label
 end
