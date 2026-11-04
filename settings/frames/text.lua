@@ -33,6 +33,8 @@ local function setText(text, params)
 end
 
 function ns.builder.CreateText(section, text, params)
+    params = ns.builder.TextParams:new(params)
+
     createFontString(section, params)
 
     setText(text, params)
