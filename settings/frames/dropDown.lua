@@ -3,31 +3,7 @@ local name, ns = ...
 local label = {}
 local dropDown = {}
 
-local function createLabel(section, params)
-    local fontString = params and params.fontString or
-        ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
-    local offset = params and params.offset or
-        ns.builder.offset(0, -8)
-    local point = params and params.controlPoint or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
-
-    label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
-    label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
-end
-
-local function setText(text, params)
-    local color = params and params.textColor or
-        ns.builder.color(1, 1, 1, 1)
-    local size = params and params.size or
-        12
-
-    local file, _, flags = label:GetFont()
-    label:SetFont(tostring(file), size, flags)
-    label:SetTextColor(color.r, color.g, color.b, color.a)
-    label:SetText(text)
-end
-
-local function createDropDown(section, key, params)
+local function createDropDown(section, params)
     local point = params and params.controlPoint or
         ns.builder.point("LEFT", label, "RIGHT", 6, -2)
 
@@ -106,16 +82,20 @@ local function initialize(key)
 end
 
 function ns.builder.CreateDropDown(section, text, key, options, params)
-    createLabel(section, params)
-    setText(text, params)
+    --
+    local textSettings = ns.builder.settings.text:NewSettings({
+        offset = { x = 0, y = -8 }
+    }, section.anchor)
 
-    createDropDown(section, key, params)
+    local _, frame = ns.builder.CreateText(section, text, textSettings)
+    label = frame
+
+    createDropDown(section, params)
     setWidth(params)
     setOptions(options)
     setFetch(key)
 
     initialize(key)
 
-    section:setAnchor(label)
-    return dropDown
+    return label, dropDown
 end

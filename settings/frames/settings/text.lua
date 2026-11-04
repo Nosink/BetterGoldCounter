@@ -1,42 +1,25 @@
 local _, ns = ...
 
+local builder = ns.builder
+
 local settings = {}
 settings.__index = settings
 
-function settings:NewSettings(settings)
+function settings:NewSettings(settings, anchor)
     settings = settings or {}
 
+    local offset = settings.offset or builder.offset()
+    local point = builder.point("TOPLEFT", anchor, "BOTTOMLEFT", offset.x, offset.y)
     return setmetatable({
-        fontString = settings.fontString,
-        offset = settings.offset,
-        textPoint = settings.point,
-        textColor = settings.color,
-        size = settings.size,
-        justify = settings.justify,
-
-        setFontString = function(self, name, layer, template)
-            self.fontString = ns.builder.fontString(name, layer, template)
-        end,
-
-        setOffset = function(self, x, y)
-            self.offset = ns.builder.offset(x, y)
-        end,
-
-        setTextPoint = function(self, point, relativeTo, relativePoint, x, y)
-            self.textPoint = ns.builder.point(point, relativeTo, relativePoint, x, y)
-        end,
-
-        setColor = function(self, r, g, b, a)
-            self.textColor = ns.builder.color(r, g, b, a)
-        end,
-
-        setSize = function(self, size)
-            self.size = size
-        end,
-
-        setJustify = function(self, horizontal, vertical)
-            self.justify = { h = horizontal, v = vertical }
-        end,
+        fontString = settings.fontString or builder.fontString(),
+        offset = offset,
+        point = settings.point or point,
+        color = settings.color or builder.color(),
+        size = settings.size or 12,
+        width = settings.width or nil,
+        forceWidth = settings.width and true or false,
+        flags = settings.flags or "",
+        justify = settings.justify or builder.justify()
     }, self)
 end
 

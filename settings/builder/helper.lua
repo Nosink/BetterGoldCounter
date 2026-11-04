@@ -32,3 +32,7 @@ end
 function ns.builder.offset(x, y)
     return { x = x or 0, y = y or 0 }
 end
+
+function ns.builder.justify(h, v)
+    return { h = h or "LEFT", v = v or "TOP" }
+end

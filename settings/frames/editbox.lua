@@ -3,30 +3,6 @@ local name, ns = ...
 local label = {}
 local editBox = {}
 
-local function createLabel(section, text, params)
-    local fontString = params and params.fontString or
-        ns.builder.fontString(nil, "ARTWORK", "GameFontNormal")
-    local offset = params and params.offset or
-        ns.builder.offset(0, -10)
-    local point = params and params.textPoint or
-        ns.builder.point("TOPLEFT", section.anchor, "BOTTOMLEFT", offset.x, offset.y)
-
-    label = section.optionsPanel:CreateFontString(fontString.name, fontString.layer, fontString.template)
-    label:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
-end
-
-local function setLabelText(text, params)
-    local color = params and params.textColor or
-        ns.builder.color(1, 1, 1, 1)
-    local size = params and params.size or
-        12
-
-    local file, _, flags = label:GetFont()
-    label:SetFont(tostring(file), size, flags)
-    label:SetTextColor(color.r, color.g, color.b, color.a)
-    label:SetText(text)
-end
-
 local function createEditBox(section, key, params)
     local point = params and params.controlPoint or
         ns.builder.point("LEFT", label, "RIGHT", 10, 0)
@@ -89,8 +65,13 @@ local function setFetch(key)
 end
 
 function ns.builder.CreateEditBox(section, text, key, params)
-    createLabel(section, text, params)
-    setLabelText(text, params)
+    --
+    local textSettings = ns.builder.settings.text:NewSettings({
+        offset = { x = 0, y = -10 }, point = params.point
+    }, section.anchor)
+
+    local _, frame = ns.builder.CreateText(section, text, textSettings)
+    label = frame
 
     createEditBox(section, key, params)
     setSize(params)
@@ -98,6 +79,5 @@ function ns.builder.CreateEditBox(section, text, key, params)
     setEvents(key)
     setFetch(key)
 
-    section:setAnchor(label)
-    return editBox
+    return label, editBox
 end
