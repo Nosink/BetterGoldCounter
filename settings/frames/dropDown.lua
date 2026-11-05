@@ -1,23 +1,17 @@
 local name, ns = ...
 
-local label = {}
-local dropDown = {}
-
-local function createDropDown(section, params)
-    local point = params and params.point or
-        ns.builder.point("LEFT", label, "RIGHT", 6, -2)
-
-    dropDown = CreateFrame("Frame", nil, section.optionsPanel, "UIDropDownMenuTemplate")
-    dropDown:SetPoint(point.point, point.relativeTo, point.relativePoint, point.x, point.y)
+local function createDropDown(section, settings)
+    local dropDown = CreateFrame("Frame", nil, section.optionsPanel, "UIDropDownMenuTemplate")
+    dropDown:SetPoint(settings.point.point, settings.point.relativeTo, settings.point.relativePoint, settings.point.x,
+        settings.point.y)
+    return dropDown
 end
 
-local function setWidth(params)
-    local width = params and params.width or
-        50
-    UIDropDownMenu_SetWidth(dropDown, width)
+local function setWidth(dropDown, settings)
+    UIDropDownMenu_SetWidth(dropDown, settings.width)
 end
 
-local function setOptions(options)
+local function setOptions(dropDown, options)
     local normalizedOptions = {}
     for _, option in ipairs(options) do
         if type(option) == "table" and option.value and option.text then
@@ -32,7 +26,7 @@ local function setOptions(options)
     dropDown.options = normalizedOptions
 end
 
-local function getTextForValue(value)
+local function getTextForValue(dropDown, value)
     for _, opt in ipairs(dropDown.options) do
         if opt.value == value then return opt.text end
     end
@@ -44,8 +38,8 @@ local function triggerSettingsChanged(key, value)
     ns.bus:TriggerEvent(name .. "_SETTINGS_CHANGED", key)
 end
 
-local function setSelection(key, value, silent)
-    local text = getTextForValue(value)
+local function setSelection(dropDown, key, value, silent)
+    local text = getTextForValue(dropDown, value)
     UIDropDownMenu_SetSelectedValue(dropDown, value)
     UIDropDownMenu_SetText(dropDown, text)
     if not silent then
@@ -53,26 +47,26 @@ local function setSelection(key, value, silent)
     end
 end
 
-local function setFetch(key)
+local function setFetch(dropDown, key)
     dropDown.Fetch = function(self)
         local value = ns.db[key]
         if value == nil and self.options[1] then
             value = self.options[1].value
         end
         if value ~= nil then
-            setSelection(key, value, true)
+            setSelection(dropDown, key, value, true)
         end
     end
 end
 
-local function initialize(key)
+local function initialize(dropDown, key)
     local function initFunction(_, level)
         for _, opt in ipairs(dropDown.options) do
             local info = UIDropDownMenu_CreateInfo()
             info.text = opt.text
             info.value = opt.value
             info.func = function()
-                setSelection(key, opt.value, false)
+                setSelection(dropDown, key, opt.value, false)
             end
             UIDropDownMenu_AddButton(info, level)
         end
@@ -81,21 +75,16 @@ local function initialize(key)
     UIDropDownMenu_Initialize(dropDown, initFunction)
 end
 
-function ns.builder.CreateDropDown(section, text, key, options, params)
-    --
-    local textSettings = ns.builder.settings.text:NewSettings({
-        offset = { x = 0, y = -8 }
-    }, section.anchor)
+function ns.builder.CreateDropDown(section, text, key, options, settings)
+    local _, label = ns.builder.CreateText(section, text, settings.textSettings)
+    settings:SetLabel(label)
 
-    local _, frame = ns.builder.CreateText(section, text, textSettings)
-    label = frame
+    local dropDown = createDropDown(section, settings)
+    setWidth(dropDown, settings)
+    setOptions(dropDown, options)
+    setFetch(dropDown, key)
 
-    createDropDown(section, params)
-    setWidth(params)
-    setOptions(options)
-    setFetch(key)
-
-    initialize(key)
+    initialize(dropDown, key)
 
     return label, dropDown
 end

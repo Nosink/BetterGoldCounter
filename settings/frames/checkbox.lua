@@ -54,5 +54,5 @@ function ns.builder.CreateCheckBox(section, text, key, params)
     setFetch(key)
 
     section:setAnchor(checkBox)
-    return checkBox
+    return checkBox, checkBox
 end

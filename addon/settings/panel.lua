@@ -25,10 +25,13 @@ sizeSection:AddEditBox(L["LKEY_OPTIONS_FONT_SIZE_EB"], "fontSize",
         validator = builder.inRangeValidator(8, 36)
     }, sizeSection.anchor))
 sizeSection:AddDropDown(L["LKEY_OPTIONS_FONT_ALIGNMENT_TITLE"], "fontAlignment", {
-    { value = "LEFT",   text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] },
-    { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] },
-    { value = "RIGHT",  text = L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"] },
-}, { width = 75 })
+        { value = "LEFT",   text = L["LKEY_OPTIONS_FONT_ALIGNMENT_LEFT"] },
+        { value = "CENTER", text = L["LKEY_OPTIONS_FONT_ALIGNMENT_CENTER"] },
+        { value = "RIGHT",  text = L["LKEY_OPTIONS_FONT_ALIGNMENT_RIGHT"] },
+    },
+    builder.settings.dropDown:NewSettings({
+        width = 75,
+    }, sizeSection.anchor))
 
 local widthSection = builder:CreateSection(L["LKEY_OPTIONS_DYNAMIC_WIDTH_TITLE"])
 widthSection:AddCheckBox(L["LKEY_OPTIONS_DYNAMIC_WIDTH_CB"], "dynamicWidth")

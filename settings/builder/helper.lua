@@ -23,7 +23,7 @@ end
 
 function ns.builder.fontString(name, layer, template)
     return {
-        name = name or nil,
+        name = name or "",
         layer = layer or "ARTWORK",
         template = template or "GameFontNormal"
     }
